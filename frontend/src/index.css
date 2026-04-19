@@ -1,0 +1,110 @@
+@import url('https://fonts.googleapis.com/css2?family=Almarai:wght@300;400;700;800&display=swap');
+@import "tailwindcss";
+
+:root {
+  font-family: 'Almarai', sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: light;
+  background-color: #f8fafc;
+  color: #1e293b;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  border: none;
+  font-family: 'Almarai', sans-serif;
+}
+
+/* Premium Word-Style Editor Animations */
+.ql-toolbar.ql-snow {
+  border: none !important;
+  background: white !important;
+  padding: 12px !important;
+  border-bottom: 1px solid #f1f5f9 !important;
+}
+
+.ql-toolbar button {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  border-radius: 8px !important;
+  margin: 0 2px !important;
+  position: relative !important;
+}
+
+.ql-toolbar button:hover {
+  background: #eff6ff !important;
+  color: #2563eb !important;
+  transform: translateY(-2px);
+}
+
+.ql-toolbar button:active {
+  transform: scale(0.9);
+}
+
+.ql-toolbar button.ql-active {
+  background: #2563eb !important;
+  color: white !important;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+}
+
+.ql-toolbar button.ql-active .ql-stroke {
+  stroke: white !important;
+}
+
+.ql-toolbar button.ql-active .ql-fill {
+  fill: white !important;
+}
+
+.ql-snow.ql-toolbar button:hover .ql-stroke, 
+.ql-snow.ql-toolbar button:focus .ql-stroke {
+  stroke: #2563eb !important;
+}
+
+.ql-container.ql-snow {
+  border: none !important;
+}
+
+.ql-editor {
+  min-height: 250px;
+  font-family: 'Inter', 'Outfit', sans-serif;
+  line-height: 1.8;
+  font-size: 15px;
+  padding: 20px !important;
+}
+
+/* Translate Quill Toolbar to Arabic */
+.ql-snow .ql-picker.ql-header .ql-picker-label::before,
+.ql-snow .ql-picker.ql-header .ql-picker-item::before {
+  content: 'نص عادي' !important;
+}
+.ql-snow .ql-picker.ql-header .ql-picker-label[data-value="1"]::before,
+.ql-snow .ql-picker.ql-header .ql-picker-item[data-value="1"]::before {
+  content: 'عنوان رئيسي' !important;
+}
+.ql-snow .ql-picker.ql-header .ql-picker-label[data-value="2"]::before,
+.ql-snow .ql-picker.ql-header .ql-picker-item[data-value="2"]::before {
+  content: 'عنوان فرعي' !important;
+}
+.ql-snow .ql-picker.ql-header .ql-picker-label[data-value="3"]::before,
+.ql-snow .ql-picker.ql-header .ql-picker-item[data-value="3"]::before {
+  content: 'عنوان 3' !important;
+}
+
+/* Fix the overlapping icon in picker */
+.ql-snow .ql-picker.ql-header {
+  width: 100px !important;
+}
+.ql-snow .ql-picker-label {
+  padding-right: 18px !important;
+  text-align: right !important;
+}
+
+#root {
+  width: 100%;
+}
