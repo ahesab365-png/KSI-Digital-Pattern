@@ -24,10 +24,12 @@ body {
 
 /* Premium Word-Style Editor Animations */
 .ql-toolbar.ql-snow {
-  border: none !important;
+  border: 2px solid #0f172a !important; /* Stark black/slate border */
+  border-radius: 12px !important;
   background: white !important;
   padding: 12px !important;
-  border-bottom: 1px solid #f1f5f9 !important;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1) !important;
+  margin-bottom: 16px !important;
 }
 
 .ql-toolbar button {
@@ -76,7 +78,25 @@ body {
   line-height: 1.8;
   font-size: 15px;
   padding: 20px !important;
+  /* Fix overflow for long unbroken text */
+  word-break: break-all !important; /* Force break for continuous chars */
+  overflow-wrap: anywhere !important;
+  white-space: pre-wrap !important;
+  overflow-x: hidden !important;
+  max-width: 100% !important;
 }
+
+/* Prevent the whole editor container from overflowing */
+.ql-container {
+  overflow: hidden !important;
+  max-width: 100% !important;
+}
+
+.quill-transparent {
+  overflow: hidden !important;
+  max-width: 100% !important;
+}
+
 
 /* Translate Quill Toolbar to Arabic */
 .ql-snow .ql-picker.ql-header .ql-picker-label::before,
@@ -96,13 +116,23 @@ body {
   content: 'عنوان 3' !important;
 }
 
-/* Fix the overlapping icon in picker */
+/* Fix the overlapping icon in text pickers only! */
 .ql-snow .ql-picker.ql-header {
   width: 100px !important;
 }
-.ql-snow .ql-picker-label {
+.ql-snow .ql-picker.ql-header .ql-picker-label {
   padding-right: 18px !important;
   text-align: right !important;
+}
+
+/* Ensure Color, Background, and Align icons are fully visible with strong color stroke */
+.ql-snow .ql-picker.ql-color .ql-picker-label svg .ql-stroke,
+.ql-snow .ql-picker.ql-background .ql-picker-label svg .ql-stroke,
+.ql-snow .ql-picker.ql-align .ql-picker-label svg .ql-stroke {
+  stroke: #475569 !important;
+}
+.ql-snow .ql-picker-label:hover svg .ql-stroke {
+  stroke: #2563eb !important;
 }
 
 #root {

@@ -25,3 +25,7 @@ export const DB_URI = process.env.DB_URI ?? `mongodb://127.0.0.1:27017/${DB_NAME
 
 export const SALT_ROUND = parseInt(process.env.SALT_ROUND ?? '10')
 console.log({SALT_ROUND});
+
+export const CLOUD_NAME = process.env.CLOUD_NAME
+export const API_KEY = process.env.API_KEY
+export const API_SECRET = process.env.API_SECRET

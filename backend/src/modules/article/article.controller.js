@@ -1,4 +1,17 @@
 import { ArticleModel } from "../../DB/model/article.model.js";
+import cloudinary from '../../utils/cloudinary.js';
+
+const extractPublicId = (url) => {
+    if (!url || typeof url !== 'string' || !url.includes('cloudinary.com')) return null;
+    const splitUrl = url.split('/upload/');
+    if (splitUrl.length < 2) return null;
+    let path = splitUrl[1];
+    if (path.match(/^v\d+\//)) {
+        path = path.replace(/^v\d+\//, '');
+    }
+    const lastDotIndex = path.lastIndexOf('.');
+    return lastDotIndex !== -1 ? path.substring(0, lastDotIndex) : path;
+};
 
 export const getArticles = async (req, res, next) => {
     try {
@@ -58,9 +71,33 @@ export const updateArticle = async (req, res, next) => {
 export const deleteArticle = async (req, res, next) => {
     try {
         const { id } = req.params;
-        const article = await ArticleModel.findByIdAndDelete(id);
+        const article = await ArticleModel.findById(id);
         if (!article) return res.status(404).json({ message: "Article not found" });
-        return res.status(200).json({ message: "Article deleted successfully" });
+
+        // Collect images from main image and steps
+        const imageUrls = [];
+        if (article.image) imageUrls.push(article.image);
+        if (article.steps && Array.isArray(article.steps)) {
+            article.steps.forEach(step => {
+                if (step.image) imageUrls.push(step.image);
+            });
+        }
+
+        // Delete images from Cloudinary synchronously or asynchronously
+        for (const url of imageUrls) {
+            const publicId = extractPublicId(url);
+            if (publicId) {
+                try {
+                    await cloudinary.uploader.destroy(publicId);
+                    console.log(`Deleted Cloudinary image: ${publicId}`);
+                } catch (err) {
+                    console.error(`Failed to delete Cloudinary image: ${publicId}`, err);
+                }
+            }
+        }
+
+        await ArticleModel.findByIdAndDelete(id);
+        return res.status(200).json({ message: "Article and associated images deleted successfully" });
     } catch (error) {
         return next(error);
     }

@@ -1,10 +1,35 @@
-const API_URL = 'http://localhost:7000/articles';
+const BASE_URL = 'http://localhost:7000';
+const ARTICLES_URL = `${BASE_URL}/articles`;
 
 export const articleService = {
+  // Upload Image to Cloudinary
+  uploadImage: async (file) => {
+    try {
+        const token = localStorage.getItem('admin_token');
+        const formData = new FormData();
+        formData.append('image', file);
+
+        const res = await fetch(`${BASE_URL}/upload/image`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`
+          },
+          body: formData
+        });
+
+        if (!res.ok) throw new Error('فشل رفع الصورة');
+        const data = await res.json();
+        return data.imageUrl; // Cloudinary URL
+    } catch (error) {
+        console.error("articleService uploadImage error:", error);
+        throw error;
+    }
+  },
+
   // Get all articles
   getAll: async () => {
     try {
-        const res = await fetch(API_URL);
+        const res = await fetch(ARTICLES_URL);
         if (!res.ok) throw new Error('Failed to fetch articles');
         const data = await res.json();
         return data.articles || [];
@@ -18,7 +43,7 @@ export const articleService = {
   save: async (article) => {
     try {
         const token = localStorage.getItem('admin_token');
-        const res = await fetch(API_URL, {
+        const res = await fetch(ARTICLES_URL, {
           method: 'POST',
           headers: { 
             'Content-Type': 'application/json',
@@ -43,7 +68,7 @@ export const articleService = {
   // Get articles by program and main category
   getByCategory: async (programId, mainCategory) => {
     try {
-        const res = await fetch(`${API_URL}?program=${programId}&mainCategory=${mainCategory}`);
+        const res = await fetch(`${ARTICLES_URL}?program=${programId}&mainCategory=${mainCategory}`);
         if (!res.ok) throw new Error('Failed to fetch filtered articles');
         const data = await res.json();
         return (data.articles || []).filter(a => a.isPublic);
@@ -73,7 +98,7 @@ export const articleService = {
   // Get article by ID
   getById: async (id) => {
     try {
-        const res = await fetch(`${API_URL}/${id}`);
+        const res = await fetch(`${ARTICLES_URL}/${id}`);
         if (!res.ok) throw new Error('Article not found');
         const data = await res.json();
         return data.article;
@@ -87,7 +112,7 @@ export const articleService = {
   update: async (id, updatedData) => {
     try {
         const token = localStorage.getItem('admin_token');
-        const res = await fetch(`${API_URL}/${id}`, {
+        const res = await fetch(`${ARTICLES_URL}/${id}`, {
           method: 'PUT',
           headers: { 
             'Content-Type': 'application/json',
@@ -108,7 +133,7 @@ export const articleService = {
   remove: async (id) => {
     try {
         const token = localStorage.getItem('admin_token');
-        const res = await fetch(`${API_URL}/${id}`, {
+        const res = await fetch(`${ARTICLES_URL}/${id}`, {
           method: 'DELETE',
           headers: { 
             'Authorization': `Bearer ${token}`

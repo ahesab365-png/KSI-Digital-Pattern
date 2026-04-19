@@ -1,5 +1,5 @@
 import { NODE_ENV, port } from '../config/config.service.js'
-import { authRouter, userRouter, articleRouter } from './modules/index.js'
+import { authRouter, userRouter, articleRouter, uploadRouter } from './modules/index.js'
 import express from 'express'
 import cors from 'cors'
 import bcrypt from 'bcrypt'
@@ -25,7 +25,11 @@ async function bootstrap() {
     }
 
     // Middlewares
-    app.use(cors())
+    app.use(cors({
+        origin: '*',
+        methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+        allowedHeaders: ['Content-Type', 'Authorization'],
+    }))
     
     // 🔥 Increased limit to handle high-res images in articles (Base64)
     app.use(express.json({ limit: '50mb' }))
@@ -36,6 +40,7 @@ async function bootstrap() {
     app.use('/auth', authRouter)
     app.use('/user', userRouter)
     app.use('/articles', articleRouter)
+    app.use('/upload', uploadRouter)
 
     // Invalid routing
     app.use((req, res) => {

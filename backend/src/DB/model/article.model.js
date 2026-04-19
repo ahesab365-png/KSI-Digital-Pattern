@@ -11,7 +11,7 @@ const articleSchema = new mongoose.Schema({
         id: { type: Number },
         title: { type: String },
         text: { type: String },
-        image: { type: String } // Base64 or URL
+        image: { type: String } // Cloudinary URL
     }]
 }, { timestamps: true });
 

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import ReactQuill from 'react-quill-new';
 import 'react-quill-new/dist/quill.snow.css';
-import { Save, Image as ImageIcon, Plus, Trash2, Eye, EyeOff, Settings, History, CheckCircle2, ChevronDown, ChevronUp, Layers, Type, X, AlertTriangle, FileText } from 'lucide-react';
+import { Save, Image as ImageIcon, Plus, Trash2, Eye, EyeOff, Settings, History, CheckCircle2, ChevronDown, ChevronUp, Layers, Type, X, AlertTriangle, FileText, Loader2 } from 'lucide-react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { articleService } from '../services/articleService';
 import Swal from 'sweetalert2';
@@ -189,13 +189,23 @@ const CreateArticle = () => {
   const handleStepTextChange = (id, val) => {
     setSteps(prev => prev.map(s => s.id === id ? { ...s, text: val } : s));
   };
-  const handleImageChange = (id, file) => {
+  const handleImageChange = async (id, file) => {
     if (!file) return;
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setSteps(steps.map(s => s.id === id ? { ...s, image: reader.result } : s));
-    };
-    reader.readAsDataURL(file);
+    
+    // Set loading state for this step
+    setSteps(prev => prev.map(s => s.id === id ? { ...s, isUploading: true } : s));
+
+    try {
+      const imageUrl = await articleService.uploadImage(file);
+      setSteps(prev => prev.map(s => s.id === id ? { ...s, image: imageUrl, isUploading: false } : s));
+    } catch (error) {
+      setSteps(prev => prev.map(s => s.id === id ? { ...s, isUploading: false } : s));
+      MySwal.fire({
+          title: 'خطأ في الرفع',
+          text: 'لم نتمكن من رفع الصورة، يرجى المحاولة مرة أخرى.',
+          icon: 'error'
+      });
+    }
   };
 
   return (
@@ -338,7 +348,16 @@ const CreateArticle = () => {
                          <div className="lg:col-span-4">
                             <input type="file" id={`f-${step.id}`} className="hidden" accept="image/*" onChange={(e) => handleImageChange(step.id, e.target.files[0])} />
                             <label htmlFor={`f-${step.id}`} className="w-full aspect-square bg-slate-50 border-2 border-dashed border-slate-200 rounded-[2.5rem] flex flex-col items-center justify-center cursor-pointer overflow-hidden hover:border-blue-400 transition-all">
-                               {step.image ? <img src={step.image} className="w-full h-full object-cover" /> : <ImageIcon size={32} className="text-slate-200" />}
+                                {step.isUploading ? (
+                                  <div className="flex flex-col items-center gap-2">
+                                    <Loader2 size={32} className="text-blue-500 animate-spin" />
+                                    <span className="text-[10px] font-black text-blue-400">جاري الرفع...</span>
+                                  </div>
+                                ) : step.image ? (
+                                  <img src={step.image} className="w-full h-full object-cover" />
+                                ) : (
+                                  <ImageIcon size={32} className="text-slate-200" />
+                                )}
                             </label>
                          </div>
                       </div>
