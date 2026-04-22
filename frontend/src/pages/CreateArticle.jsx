@@ -291,6 +291,33 @@ const CreateArticle = () => {
                           </button>
                      </div>
                    </div>
+
+                   <div className="space-y-4 pt-4 border-t border-slate-50">
+                     <label className="text-[11px] font-black text-slate-400 block text-right px-2">خصوصية الدرس</label>
+                     <div className="flex flex-col gap-2">
+                        <button 
+                          onClick={() => setIsPublic(true)} 
+                          className={`flex items-center justify-between p-4 rounded-2xl border transition-all ${isPublic ? 'bg-emerald-50 border-emerald-200 text-emerald-700' : 'bg-white border-slate-100 text-slate-400 hover:border-slate-200'}`}
+                        >
+                          <div className={`p-1.5 rounded-lg ${isPublic ? 'bg-emerald-500 text-white' : 'bg-slate-100'}`}><Eye size={14} /></div>
+                          <div className="flex flex-col items-end">
+                            <span className="text-[11px] font-black">عام (Public)</span>
+                            <span className="text-[9px] opacity-70">يظهر للجميع على الموقع</span>
+                          </div>
+                        </button>
+                        
+                        <button 
+                          onClick={() => setIsPublic(false)} 
+                          className={`flex items-center justify-between p-4 rounded-2xl border transition-all ${!isPublic ? 'bg-amber-50 border-amber-200 text-amber-700' : 'bg-white border-slate-100 text-slate-400 hover:border-slate-200'}`}
+                        >
+                          <div className={`p-1.5 rounded-lg ${!isPublic ? 'bg-amber-500 text-white' : 'bg-slate-100'}`}><EyeOff size={14} /></div>
+                          <div className="flex flex-col items-end">
+                            <span className="text-[11px] font-black">خاص (Private)</span>
+                            <span className="text-[9px] opacity-70">يظهر لك فقط في لوحة التحكم</span>
+                          </div>
+                        </button>
+                     </div>
+                   </div>
                 </div>
              </div>
            </div>
