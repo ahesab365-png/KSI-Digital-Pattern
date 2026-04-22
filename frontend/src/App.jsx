@@ -1,6 +1,7 @@
 import React from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
 import MainLayout from './components/layout/MainLayout';
+import Loader from './components/common/Loader';
 import Home from './pages/Home';
 import ProgramDetails from './pages/ProgramDetails';
 import Article from './pages/Article';
@@ -36,14 +37,11 @@ function App() {
     </Routes>
   );
 
-  if (isLoginPage) {
-    return AppRoutes;
-  }
-
   return (
-    <MainLayout>
-      {AppRoutes}
-    </MainLayout>
+    <>
+      {loading && <Loader />}
+      {isLoginPage ? AppRoutes : <MainLayout>{AppRoutes}</MainLayout>}
+    </>
   );
 }
 
