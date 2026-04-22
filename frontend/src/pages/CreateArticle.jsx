@@ -23,6 +23,7 @@ const CreateArticle = () => {
   const [category, setCategory] = useState('');
   const [isPublic, setIsPublic] = useState(true);
   const [steps, setSteps] = useState([{ id: Date.now(), title: '', text: '', image: null }]);
+  const [extraSections, setExtraSections] = useState([]);
   const [isSaving, setIsSaving] = useState(false);
   const [lastSaved, setLastSaved] = useState(null);
 
@@ -44,13 +45,8 @@ const CreateArticle = () => {
           setMainCategory(art.mainCategory);
           setCategory(art.category);
           setIsPublic(art.isPublic);
-          setSteps(art.steps);
-        }
-      } else {
-        const savedDraft = localStorage.getItem(DRAFT_KEY);
-        if (savedDraft) {
-          const data = JSON.parse(savedDraft);
-          // Optional: Ask to restore. For now, we'll skip to keep it clean.
+          setSteps(art.steps || []);
+          setExtraSections(art.extraSections || []);
         }
       }
     };
@@ -64,7 +60,16 @@ const CreateArticle = () => {
 
     setIsSaving(true);
     try {
-        const articleData = { title, content, program, mainCategory, category, isPublic: publish ? isPublic : false, steps };
+        const articleData = { 
+          title, 
+          content, 
+          program, 
+          mainCategory, 
+          category, 
+          isPublic: publish ? isPublic : false, 
+          steps,
+          extraSections
+        };
         if (isEditMode) {
             await articleService.update(id, articleData);
         } else {
@@ -86,6 +91,14 @@ const CreateArticle = () => {
     const newSteps = [...steps];
     newSteps[index][field] = value;
     setSteps(newSteps);
+  };
+
+  const addExtraSection = () => setExtraSections([...extraSections, { title: '', content: '' }]);
+  const removeExtraSection = (index) => setExtraSections(extraSections.filter((_, i) => i !== index));
+  const updateExtraSection = (index, field, value) => {
+    const newSections = [...extraSections];
+    newSections[index][field] = value;
+    setExtraSections(newSections);
   };
 
   const handleImageUpload = async (index, file) => {
@@ -264,6 +277,56 @@ const CreateArticle = () => {
                   </div>
                 </div>
               ))}
+            </div>
+
+            {/* Custom Information Sections */}
+            <div className="space-y-8 pt-10 border-t-4 border-black">
+               <div className="flex items-center justify-between px-2">
+                 <button onClick={addExtraSection} className="bg-emerald-600 text-white p-2.5 rounded-xl hover:bg-emerald-700 transition-all shadow-sm border-2 border-black">
+                   <Plus size={20} />
+                 </button>
+                 <div className="text-right">
+                   <h3 className="text-xl font-black text-black">أقسام إضافية مخصصة</h3>
+                   <p className="text-slate-400 text-[10px] font-bold">يمكنك إضافة أقسام (مثل: تعليمات عامة، الأدوات..إلخ)</p>
+                 </div>
+               </div>
+
+               {extraSections.map((section, index) => (
+                 <div key={index} className="bg-white rounded-[2rem] p-6 md:p-8 shadow-sm border-2 border-black relative animate-in fade-in slide-in-from-right-4 duration-500">
+                    <button onClick={() => removeExtraSection(index)} className="absolute -left-2 -top-2 w-8 h-8 rounded-full bg-red-600 text-white flex items-center justify-center border-2 border-white shadow-lg hover:scale-110 transition-transform">
+                      <X size={14} />
+                    </button>
+                    
+                    <div className="space-y-6 text-right">
+                       <div className="space-y-2">
+                         <label className="text-xs font-black text-black block pr-1">اسم القسم (مثال: تعليمات هامة)</label>
+                         <input
+                           type="text"
+                           className="w-full bg-white border-2 border-black rounded-xl px-4 py-3 text-sm font-black text-slate-800 focus:ring-4 focus:ring-slate-100 transition-all text-right"
+                           placeholder="اكتب اسم القسم هنا..."
+                           value={section.title}
+                           onChange={(e) => updateExtraSection(index, 'title', e.target.value)}
+                         />
+                       </div>
+
+                       <div className="space-y-2">
+                         <label className="text-xs font-black text-black block pr-1">محتوى القسم</label>
+                         <textarea
+                           className="w-full h-32 bg-white border-2 border-black rounded-2xl p-4 text-sm font-medium text-slate-600 focus:ring-4 focus:ring-slate-100 transition-all text-right resize-none"
+                           placeholder="اكتب تفاصيل هذا القسم هنا..."
+                           value={section.content}
+                           onChange={(e) => updateExtraSection(index, 'content', e.target.value)}
+                         />
+                       </div>
+                    </div>
+                 </div>
+               ))}
+
+               {extraSections.length === 0 && (
+                 <div className="text-center py-10 border-2 border-dashed border-slate-200 rounded-[2rem]">
+                    <p className="text-slate-300 text-xs font-black">لا توجد أقسام إضافية مخصصة حالياً</p>
+                 </div>
+               )}
             </div>
           </div>
 

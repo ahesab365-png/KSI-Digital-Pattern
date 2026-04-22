@@ -143,6 +143,23 @@ const Article = () => {
              </div>
            ))}
         </div>
+
+        {/* Custom Extra Sections Display */}
+        {article.extraSections && article.extraSections.length > 0 && (
+          <div className="p-6 md:p-12 space-y-12 bg-slate-50/50 border-t-2 border-black">
+            {article.extraSections.map((section, index) => (
+              <div key={index} className="text-right space-y-4">
+                 <div className="flex items-center justify-end gap-3 border-b-2 border-black/5 pb-2">
+                    <h3 className="text-xl font-black text-black">{section.title}</h3>
+                    <div className="w-2 h-6 bg-black rounded-full"></div>
+                 </div>
+                 <p className="text-slate-600 text-sm md:text-base leading-[2] whitespace-pre-wrap font-medium">
+                    {section.content}
+                 </p>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       <div className="mt-16 text-center">

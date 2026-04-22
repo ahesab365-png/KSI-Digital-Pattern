@@ -12,6 +12,10 @@ const articleSchema = new mongoose.Schema({
         title: { type: String },
         text: { type: String },
         image: { type: String } // Cloudinary URL
+    }],
+    extraSections: [{
+        title: { type: String },
+        content: { type: String }
     }]
 }, { timestamps: true });
 
