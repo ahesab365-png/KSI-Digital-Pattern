@@ -1,44 +1,53 @@
 import React from 'react';
-import { Shirt } from 'lucide-react';
 
 const Loader = () => {
   return (
-    <div className="fixed inset-0 z-[2000] bg-white flex flex-col items-center justify-center font-arabic">
-      {/* Outer Glow effect */}
-      <div className="relative">
-        {/* Animated Rings */}
-        <div className="absolute inset-0 scale-150 animate-ping opacity-20">
-           <Shirt size={80} className="text-black" />
-        </div>
-        
-        {/* Main Icon Container */}
-        <div className="relative bg-white border-4 border-black p-8 rounded-[2.5rem] shadow-[10px_10px_0px_0px_rgba(0,0,0,1)] animate-bounce duration-[2000ms]">
-          <Shirt size={60} className="text-black stroke-[2.5px]" />
-          
-          {/* Internal Progress Line (Simulated) */}
-          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 w-10 h-1 bg-black rounded-full overflow-hidden">
-             <div className="h-full bg-blue-500 w-full animate-progress-fast origin-right"></div>
-          </div>
-        </div>
+    <div className="fixed inset-0 z-[2000] bg-white/30 backdrop-blur-md flex flex-col items-center justify-center font-arabic">
+      <div className="relative w-40 h-40 flex items-center justify-center">
+        {/* Animated Drawing SVG */}
+        <svg 
+          viewBox="0 0 24 24" 
+          className="w-24 h-24 text-black fill-none stroke-black stroke-[1.5]"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path 
+            className="shirt-path"
+            d="M20.38 8.57l-1.23 1.85a2.503 2.503 0 01-2.09 1.1h-2.13v9.48c0 .55-.45 1-1 1h-3.86c-.55 0-1-.45-1-1v-9.48H6.94c-.81 0-1.55-.4-2.09-1.1L3.62 8.57c-.23-.34-.23-.79.01-1.13l2.09-3.13C5.97 3.93 6.4 3.7 6.85 3.7h1.49a3.655 3.655 0 017.31 0h1.49c.45 0 .88.23 1.13.61l2.09 3.13c.25.34.25.79.02 1.13z" 
+            strokeLinecap="round" 
+            strokeLinejoin="round"
+          />
+        </svg>
+
+        {/* Outer Circular Loader */}
+        <div className="absolute inset-0 border-[3px] border-black border-t-transparent rounded-full animate-spin"></div>
       </div>
 
-      {/* Text Info */}
-      <div className="mt-12 text-center">
-        <h2 className="text-xl font-black text-black tracking-widest uppercase">KSI Pattern</h2>
-        <div className="flex items-center gap-2 mt-2">
-           <span className="w-2 h-2 bg-black rounded-full animate-bounce"></span>
-           <span className="w-2 h-2 bg-black rounded-full animate-bounce [animation-delay:0.2s]"></span>
-           <span className="w-2 h-2 bg-black rounded-full animate-bounce [animation-delay:0.4s]"></span>
+      {/* Modern Minimal Text */}
+      <div className="mt-6 flex flex-col items-center">
+        <span className="text-[10px] font-black text-black uppercase tracking-[0.4em]">Designing Your Experience</span>
+        <div className="h-1 w-20 bg-black/10 mt-2 rounded-full overflow-hidden">
+           <div className="h-full bg-black w-full animate-loading-bar"></div>
         </div>
       </div>
 
       <style dangerouslySetInnerHTML={{ __html: `
-        @keyframes progress-fast {
-          0% { transform: translateX(100%); }
-          100% { transform: translateX(-100%); }
+        .shirt-path {
+          stroke-dasharray: 100;
+          stroke-dashoffset: 100;
+          animation: draw-shirt 3s infinite alternate ease-in-out;
         }
-        .animate-progress-fast {
-          animation: progress-fast 1.5s infinite linear;
+
+        @keyframes draw-shirt {
+          0% { stroke-dashoffset: 100; }
+          100% { stroke-dashoffset: 0; }
+        }
+
+        @keyframes loading-bar {
+          0% { transform: translateX(-100%); }
+          100% { transform: translateX(100%); }
+        }
+        .animate-loading-bar {
+          animation: loading-bar 2s infinite linear;
         }
       `}} />
     </div>
