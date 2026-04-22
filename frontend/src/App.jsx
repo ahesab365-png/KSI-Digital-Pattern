@@ -13,7 +13,14 @@ import ProtectedRoute from './components/auth/ProtectedRoute';
 
 function App() {
   const location = useLocation();
-  
+  const [loading, setLoading] = React.useState(true);
+
+  React.useEffect(() => {
+    setLoading(true);
+    const timer = setTimeout(() => setLoading(false), 800);
+    return () => clearTimeout(timer);
+  }, [location.pathname]);
+
   // Decide if we should show the MainLayout (with Sidebar/Header)
   // Only hide it for the login page
   const isLoginPage = location.pathname === '/admin/login';
