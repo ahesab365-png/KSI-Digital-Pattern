@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
 import MainLayout from './components/layout/MainLayout';
-import Loader from './components/common/Loader';
 import Home from './pages/Home';
 import ProgramDetails from './pages/ProgramDetails';
 import Article from './pages/Article';
@@ -13,30 +12,6 @@ import ProtectedRoute from './components/auth/ProtectedRoute';
 
 function App() {
   const location = useLocation();
-  const [loading, setLoading] = useState(true);
-  const [showLoader, setShowLoader] = useState(false);
-
-  useEffect(() => {
-    // Reset states on every route change
-    setLoading(true);
-    setShowLoader(false);
-
-    // Initial load/navigation timer
-    const loadingTimer = setTimeout(() => {
-      setLoading(false);
-    }, 600);
-
-    // Delay showing the UI loader to avoid flicker for fast users
-    const showLoaderTimer = setTimeout(() => {
-      setShowLoader(true);
-    }, 450); 
-
-    return () => {
-      clearTimeout(loadingTimer);
-      clearTimeout(showLoaderTimer);
-    };
-  }, [location.pathname]);
-
   const isLoginPage = location.pathname === '/admin/login';
 
   const AppRoutes = (
@@ -60,7 +35,6 @@ function App() {
 
   return (
     <>
-      {loading && showLoader && <Loader />}
       {isLoginPage ? AppRoutes : <MainLayout>{AppRoutes}</MainLayout>}
     </>
   );
