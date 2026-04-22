@@ -60,7 +60,7 @@ const CategoryDetails = () => {
             <Link 
               to={`/article/${sub.articleId}`}
               key={sub.articleId}
-              className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm transition-all flex flex-col items-center gap-6 group hover:border-blue-500 hover:shadow-2xl hover:shadow-blue-100 hover:-translate-y-2"
+              className="bg-white p-8 rounded-[2.5rem] border-2 border-black shadow-sm transition-all flex flex-col items-center gap-6 group hover:shadow-xl hover:-translate-y-2"
             >
               <div className="p-5 rounded-3xl bg-slate-50 group-hover:bg-blue-50 group-hover:scale-110 transition-all duration-500">
                 {getIcon(sub.name)}

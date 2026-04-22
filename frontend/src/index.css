@@ -148,10 +148,23 @@ p, span, h1, h2, h3, h4, h5, h6 {
 
 /* Prevent Quill toolbar from breaking layout on small screens */
 .ql-toolbar.ql-snow {
-  display: flex;
+  display: flex !important;
   flex-wrap: wrap;
   justify-content: flex-end;
   gap: 4px;
+  border: 2px solid black !important;
+  border-top-left-radius: 1rem;
+  border-top-right-radius: 1rem;
+  background: white;
+}
+
+.ql-container.ql-snow {
+  border: 2px solid black !important;
+  border-top: none !important;
+  border-bottom-left-radius: 1rem;
+  border-bottom-right-radius: 1rem;
+  min-height: 200px;
+  font-family: inherit;
 }
 
 @media (max-width: 640px) {

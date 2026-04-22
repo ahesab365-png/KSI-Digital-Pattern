@@ -9,32 +9,32 @@ const StepCard = ({ step, index }) => {
   const isLongText = text.length > 350; 
 
   return (
-    <div className="bg-white rounded-[2rem] border border-slate-50 shadow-sm overflow-hidden border-b-2 border-b-slate-100 relative group">
+    <div className="bg-white rounded-[2rem] border-2 border-black shadow-sm overflow-hidden relative group">
        {/* Mobile Step Badge */}
-       <div className="absolute right-4 top-4 w-10 h-10 rounded-2xl bg-blue-600 text-white flex items-center justify-center font-black text-xs shadow-lg md:hidden z-10">
+       <div className="absolute right-4 top-4 w-10 h-10 rounded-xl bg-black text-white flex items-center justify-center font-black text-xs shadow-lg md:hidden z-10 border-2 border-white">
          {index + 1}
        </div>
 
-       <div className="p-5 md:p-10 flex flex-col md:flex-row gap-6 md:gap-14">
+       <div className="p-5 md:p-10 flex flex-col md:flex-row gap-6 md:gap-14 text-right">
           <div className="flex-1 order-2 md:order-1 relative pt-10 md:pt-0">
-            <div className="hidden md:flex items-center gap-4 mb-6">
-               <span className="w-10 h-10 rounded-2xl bg-slate-900 shrink-0 text-white flex items-center justify-center font-black text-sm shadow-md">{index + 1}</span>
-               <h4 className="font-black text-slate-800 text-lg">{step.title || `الخطوة رقم ${index + 1}`}</h4>
+            <div className="hidden md:flex items-center gap-4 mb-6 border-b-2 border-black pb-4">
+               <span className="w-10 h-10 rounded-xl bg-black shrink-0 text-white flex items-center justify-center font-black text-sm shadow-md">{index + 1}</span>
+               <h4 className="font-black text-black text-xl">{step.title || `الخطوة رقم ${index + 1}`}</h4>
             </div>
             {/* Mobile Title */}
-            <h4 className="md:hidden font-black text-slate-800 text-base mb-4 pr-12">{step.title || `الخطوة رقم ${index + 1}`}</h4>
+            <h4 className="md:hidden font-black text-black text-lg mb-4 pr-12 border-b-2 border-black pb-2">{step.title || `الخطوة رقم ${index + 1}`}</h4>
 
             <div className={`relative ${!isExpanded && isLongText ? 'max-h-[240px] overflow-hidden' : ''}`}>
-                <p className="text-slate-600 text-sm leading-[1.8] md:pr-14 break-words whitespace-pre-wrap">
+                <p className="text-slate-700 text-base md:text-lg leading-[1.8] md:pr-14 break-words whitespace-pre-wrap">
                   {text}
                 </p>
                 {!isExpanded && isLongText && (
                   <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent flex items-end justify-center pb-2">
                      <button 
                        onClick={() => setIsExpanded(true)}
-                       className="text-blue-600 text-xs font-black hover:underline bg-white px-6 py-2 rounded-full shadow-lg border border-slate-100"
+                       className="text-white text-xs font-black bg-black px-8 py-2.5 rounded-full shadow-lg border-2 border-white"
                      >
-                       مشاهدة المزيد
+                       اقرأ المزيد
                      </button>
                   </div>
                 )}
@@ -42,19 +42,19 @@ const StepCard = ({ step, index }) => {
             {isExpanded && isLongText && (
                <button 
                   onClick={() => setIsExpanded(false)}
-                  className="text-slate-400 text-[11px] font-black hover:text-blue-600 mt-6 md:pr-14 transition-colors"
+                  className="text-black text-xs font-black hover:underline mt-6 md:pr-14 transition-colors"
                >
-                 إخفاء التفاصيل
+                 طي التفاصيل
                </button>
             )}
           </div>
           
-          <div className="w-full md:w-[350px] bg-slate-50/50 rounded-[2rem] flex items-center justify-center order-1 md:order-2 overflow-hidden border border-slate-50 min-h-[220px] shadow-inner">
+          <div className="w-full md:w-[350px] bg-slate-50 rounded-[2rem] flex items-center justify-center order-1 md:order-2 overflow-hidden border-2 border-black min-h-[220px] shadow-inner">
              {step.image ? (
                <img src={step.image} alt={`Step ${index + 1}`} className="w-full h-full object-contain p-2" />
              ) : (
                <div className="flex flex-col items-center py-12">
-                 <ImageIcon size={40} className="opacity-10 mb-2" />
+                 <ImageIcon size={40} className="text-slate-200 mb-2" />
                  <span className="text-[10px] font-black text-slate-300">بدون صورة توضيحية</span>
                </div>
              )}

@@ -36,7 +36,7 @@ const ProgramDetails = () => {
           <div 
             key={cat.id}
             onClick={() => navigate(`/program/${id}/${cat.id}`)}
-            className="group relative h-[280px] md:h-[450px] rounded-[2.5rem] overflow-hidden cursor-pointer shadow-xl hover:shadow-blue-200/50 transition-all duration-500 border border-slate-100"
+            className="group relative h-[280px] md:h-[450px] rounded-[2.5rem] overflow-hidden cursor-pointer shadow-xl transition-all duration-500 border-4 border-black"
           >
             {/* Background Image */}
             <div 

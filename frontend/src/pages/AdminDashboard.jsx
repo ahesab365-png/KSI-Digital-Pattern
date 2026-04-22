@@ -63,14 +63,14 @@ const AdminDashboard = () => {
       </div>
 
       {/* Table Container */}
-      <div className="bg-white rounded-[2.5rem] border border-slate-100 shadow-sm overflow-hidden mb-10">
-        <div className="p-5 border-b flex flex-col sm:flex-row gap-4">
+      <div className="bg-white rounded-[2.5rem] border-2 border-black shadow-lg overflow-hidden mb-10">
+        <div className="p-5 border-b-2 border-black bg-slate-50 flex flex-col sm:flex-row gap-4">
            <div className="relative flex-1">
-             <Search className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-300" size={18} />
+             <Search className="absolute right-4 top-1/2 -translate-y-1/2 text-black" size={18} />
              <input 
                type="text" 
                placeholder="ابحث بالعنوان أو التصنيف..."
-               className="w-full bg-slate-50 border-none rounded-2xl py-3 pr-12 pl-4 outline-none text-sm focus:ring-2 focus:ring-blue-100 transition-all font-bold"
+               className="w-full bg-white border-2 border-black rounded-2xl py-3 pr-12 pl-4 outline-none text-sm focus:ring-4 focus:ring-slate-100 transition-all font-bold"
                value={searchQuery}
                onChange={(e) => setSearchQuery(e.target.value)}
              />

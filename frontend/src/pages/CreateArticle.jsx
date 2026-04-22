@@ -138,29 +138,32 @@ const CreateArticle = () => {
           
           {/* Main Editor Area */}
           <div className="lg:col-span-8 space-y-8">
-            <div className="bg-white rounded-[2rem] p-6 md:p-10 shadow-sm border border-slate-100">
-               <div className="space-y-6">
+            <div className="bg-white rounded-[2rem] p-6 md:p-10 shadow-sm border-2 border-black">
+               <div className="space-y-6 text-right">
                   {/* Title Input */}
-                  <div className="relative group">
-                    <Type className="absolute right-0 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-blue-500 transition-colors" size={20} />
-                    <input
-                      type="text"
-                      className="w-full bg-transparent border-none pr-8 py-4 text-2xl md:text-4xl font-black text-slate-800 focus:ring-0 placeholder:text-slate-200 text-right"
-                      placeholder="عنوان المقال الرئيسي"
-                      value={title}
-                      onChange={(e) => setTitle(e.target.value)}
-                    />
+                  <div className="space-y-2">
+                    <label className="text-xs font-black text-black block pr-1">عنوان المقال الرئيسي</label>
+                    <div className="relative group">
+                      <Type className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-black transition-colors" size={20} />
+                      <input
+                        type="text"
+                        className="w-full bg-white border-2 border-black rounded-2xl pr-10 py-4 text-xl md:text-2xl font-black text-slate-800 focus:ring-4 focus:ring-slate-100 transition-all text-right"
+                        placeholder="اكتب عنوان الدرس هنا..."
+                        value={title}
+                        onChange={(e) => setTitle(e.target.value)}
+                      />
+                    </div>
                   </div>
 
                   {/* Introduction Editor */}
-                  <div className="space-y-3">
-                    <label className="text-xs font-black text-slate-400 block text-right pr-2">وصف و مقدمة الدرس</label>
-                    <div className="rounded-2xl border border-slate-50 overflow-hidden bg-slate-50/30">
+                  <div className="space-y-2">
+                    <label className="text-xs font-black text-black block pr-1">وصف و مقدمة الدرس</label>
+                    <div className="rounded-2xl border-2 border-black overflow-hidden bg-white">
                       <ReactQuill 
                         value={content} 
                         onChange={setContent}
                         theme="snow"
-                        className="quill-transparent border-none"
+                        className="quill-bold-border border-none"
                       />
                     </div>
                   </div>
@@ -170,56 +173,67 @@ const CreateArticle = () => {
             {/* Steps Container */}
             <div className="space-y-6">
               <div className="flex items-center justify-between px-2">
-                 <button onClick={addStep} className="bg-blue-50 text-blue-600 p-2.5 rounded-xl hover:bg-blue-600 hover:text-white transition-all shadow-sm">
+                 <button onClick={addStep} className="bg-black text-white p-2.5 rounded-xl hover:bg-slate-800 transition-all shadow-sm border-2 border-black">
                    <Plus size={20} />
                  </button>
-                 <h3 className="text-lg font-black text-slate-800">خطوات التنفيذ</h3>
+                 <h3 className="text-lg font-black text-black">خطوات التنفيذ</h3>
               </div>
 
               {steps.map((step, index) => (
-                <div key={index} className="bg-white rounded-[2rem] p-5 md:p-8 shadow-sm border border-slate-100 relative group">
-                  <div className="absolute -right-2 -top-2 w-8 h-8 rounded-full bg-slate-900 text-white flex items-center justify-center text-xs font-black z-10 shadow-lg">
+                <div key={index} className="bg-white rounded-[2rem] p-5 md:p-8 shadow-sm border-2 border-black relative group">
+                  <div className="absolute -right-2 -top-2 w-10 h-10 rounded-xl bg-black text-white flex items-center justify-center text-sm font-black z-10 shadow-lg border-2 border-white">
                     {index + 1}
                   </div>
                   
-                  <div className="flex flex-col gap-6">
-                    <div className="flex items-center gap-3 w-full">
-                       <button onClick={() => removeStep(index)} className="p-2.5 text-red-400 hover:bg-red-50 hover:text-red-500 rounded-xl transition-all shrink-0">
-                         <Trash2 size={18} />
-                       </button>
-                       <input
-                         type="text"
-                         className="flex-1 min-w-0 bg-slate-50 border-none rounded-xl px-4 py-3 text-sm font-bold text-slate-700 focus:ring-2 focus:ring-blue-100 transition-all text-right"
-                         placeholder={`عنوان الخطوة رقم ${index + 1}`}
-                         value={step.title}
-                         onChange={(e) => updateStep(index, 'title', e.target.value)}
-                       />
+                  <div className="flex flex-col gap-6 text-right">
+                    {/* Step Title */}
+                    <div className="space-y-2">
+                       <label className="text-[10px] font-black text-black block pr-1">عنوان المرحلة / الخطوة</label>
+                       <div className="flex items-center gap-3 w-full">
+                          <button onClick={() => removeStep(index)} className="p-2.5 text-red-600 bg-white border-2 border-black hover:bg-red-50 rounded-xl transition-all shrink-0">
+                            <Trash2 size={18} />
+                          </button>
+                          <input
+                            type="text"
+                            className="flex-1 min-w-0 bg-white border-2 border-black rounded-xl px-4 py-3 text-sm font-bold text-slate-700 focus:ring-4 focus:ring-slate-100 transition-all text-right"
+                            placeholder="مثال: مرحلة قص القماش"
+                            value={step.title}
+                            onChange={(e) => updateStep(index, 'title', e.target.value)}
+                          />
+                       </div>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                       <textarea
-                         className="w-full h-40 bg-slate-50 border-none rounded-2xl p-4 text-sm font-medium text-slate-600 focus:ring-2 focus:ring-blue-100 transition-all text-right resize-none"
-                         placeholder="اشرح هذه الخطوة بالتفصيل..."
-                         value={step.text}
-                         onChange={(e) => updateStep(index, 'text', e.target.value)}
-                       />
-                       <div className="relative h-40 rounded-2xl border-2 border-dashed border-slate-100 bg-slate-50 hover:bg-slate-100 group overflow-hidden">
-                          {step.isUploading ? (
-                              <div className="absolute inset-0 flex items-center justify-center bg-white/60"><Loader2 className="animate-spin text-blue-500" /></div>
-                          ) : step.image ? (
-                            <>
-                              <img src={step.image} className="w-full h-full object-contain p-2" alt="Step" />
-                              <div className="absolute inset-0 bg-slate-900/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
-                                 <button onClick={() => updateStep(index, 'image', null)} className="bg-white text-red-500 p-2 rounded-lg"><Trash2 size={18} /></button>
-                              </div>
-                            </>
-                          ) : (
-                            <label className="absolute inset-0 flex flex-col items-center justify-center cursor-pointer">
-                              <input type="file" className="hidden" onChange={(e) => handleImageUpload(index, e.target.files[0])} />
-                              <ImageIcon size={20} className="text-slate-300 mb-1" />
-                              <span className="text-[10px] font-black text-slate-400">إضافة صورة</span>
-                            </label>
-                          )}
+                       <div className="space-y-2">
+                         <label className="text-[10px] font-black text-black block pr-1">تفاصيل المرحلة (الشرح)</label>
+                         <textarea
+                           className="w-full h-44 bg-white border-2 border-black rounded-2xl p-4 text-sm font-medium text-slate-600 focus:ring-4 focus:ring-slate-100 transition-all text-right resize-none"
+                           placeholder="اشرح هذه الخطوة بالتفصيل للمتدربين..."
+                           value={step.text}
+                           onChange={(e) => updateStep(index, 'text', e.target.value)}
+                         />
+                       </div>
+
+                       <div className="space-y-2">
+                         <label className="text-[10px] font-black text-black block pr-1">صورة توضيحية للمرحلة</label>
+                         <div className="relative h-44 rounded-2xl border-2 border-black bg-slate-50 hover:bg-white transition-all group overflow-hidden">
+                            {step.isUploading ? (
+                                <div className="absolute inset-0 flex items-center justify-center bg-white/60"><Loader2 className="animate-spin text-black" /></div>
+                            ) : step.image ? (
+                              <>
+                                <img src={step.image} className="w-full h-full object-contain p-2" alt="Step" />
+                                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
+                                   <button onClick={() => updateStep(index, 'image', null)} className="bg-white border-2 border-black text-red-600 p-2 rounded-lg hover:scale-110 transition-transform"><Trash2 size={18} /></button>
+                                </div>
+                              </>
+                            ) : (
+                              <label className="absolute inset-0 flex flex-col items-center justify-center cursor-pointer">
+                                <input type="file" className="hidden" onChange={(e) => handleImageUpload(index, e.target.files[0])} />
+                                <ImageIcon size={28} className="text-slate-300 mb-2" />
+                                <span className="text-[10px] font-black text-black bg-white px-3 py-1 rounded-full border border-black">رفع صورة</span>
+                              </label>
+                            )}
+                         </div>
                        </div>
                     </div>
                   </div>
@@ -230,21 +244,21 @@ const CreateArticle = () => {
 
           {/* Sidebar Settings */}
           <div className="lg:col-span-4 space-y-6">
-             <div className="bg-white rounded-[2rem] p-8 shadow-sm border border-slate-100 sticky top-28">
-                <div className="flex items-center justify-end gap-3 mb-8 border-b border-slate-50 pb-4">
-                   <span className="text-sm font-black text-slate-800">إعدادات النشر</span>
-                   <Settings className="text-blue-500" size={20} />
+             <div className="bg-white rounded-[2rem] p-8 shadow-sm border-2 border-black sticky top-28">
+                <div className="flex items-center justify-end gap-3 mb-8 border-b-2 border-black pb-4">
+                   <span className="text-sm font-black text-black uppercase">إعدادات الدرس</span>
+                   <Settings className="text-black" size={20} />
                 </div>
 
                 <div className="space-y-8">
                    <div className="space-y-4">
-                     <label className="text-[11px] font-black text-slate-400 block text-right px-2">فئة المتدربين</label>
+                     <label className="text-[11px] font-black text-black block text-right px-2">فئة المتدربين</label>
                      <div className="grid grid-cols-3 gap-2">
                         {mainCategories.map((cat) => (
                           <button 
                             key={cat.id}
                             onClick={() => setMainCategory(cat.id)} 
-                            className={`py-3 rounded-xl text-[10px] font-black border transition-all ${mainCategory === cat.id ? 'bg-blue-600 border-blue-600 text-white shadow-md shadow-blue-100' : 'bg-white border-slate-100 text-slate-400 hover:border-slate-200'}`}
+                            className={`py-3 rounded-xl text-[10px] font-black border-2 transition-all ${mainCategory === cat.id ? 'bg-black border-black text-white shadow-lg' : 'bg-white border-slate-200 text-slate-400 hover:border-black'}`}
                           >
                             {cat.title}
                           </button>
@@ -252,37 +266,37 @@ const CreateArticle = () => {
                      </div>
                    </div>
 
-                   <div className="space-y-4 pt-4 border-t border-slate-50">
-                     <label className="text-[11px] font-black text-slate-400 block text-right px-2">نوع القطعة</label>
+                   <div className="space-y-4 pt-4 border-t-2 border-slate-50">
+                     <label className="text-[11px] font-black text-black block text-right px-2">نوع القطعة</label>
                      <input
                        type="text"
-                       className="w-full bg-slate-50 border-none rounded-xl px-4 py-3.5 text-sm font-bold text-slate-700 text-right focus:ring-2 focus:ring-blue-100"
-                       placeholder="مثال: تيشيرت، قميص..."
+                       className="w-full bg-white border-2 border-black rounded-xl px-4 py-3.5 text-sm font-bold text-slate-700 text-right focus:ring-4 focus:ring-slate-100"
+                       placeholder="تيشيرت، قميص..."
                        value={category}
                        onChange={(e) => setCategory(e.target.value)}
                      />
                    </div>
 
-                   <div className="space-y-4 pt-4 border-t border-slate-50">
-                     <label className="text-[11px] font-black text-slate-400 block text-right px-2">برنامج التصميم</label>
+                   <div className="space-y-4 pt-4 border-t-2 border-slate-50">
+                     <label className="text-[11px] font-black text-black block text-right px-2">برنامج التصميم</label>
                      <div className="grid grid-cols-2 gap-3">
-                          <button onClick={() => setProgram('1')} className={`py-3.5 rounded-2xl text-[11px] font-black border transition-all ${program === '1' ? 'bg-slate-900 border-slate-900 text-white' : 'bg-white border-slate-200 text-slate-400'}`}>
+                          <button onClick={() => setProgram('1')} className={`py-3.5 rounded-2xl text-[11px] font-black border-2 transition-all ${program === '1' ? 'bg-slate-900 border-black text-white' : 'bg-white border-slate-200 text-slate-400'}`}>
                             Gerber
                           </button>
-                          <button onClick={() => setProgram('2')} className={`py-3.5 rounded-2xl text-[11px] font-black border transition-all ${program === '2' ? 'bg-slate-900 border-slate-900 text-white' : 'bg-white border-slate-200 text-slate-400'}`}>
+                          <button onClick={() => setProgram('2')} className={`py-3.5 rounded-2xl text-[11px] font-black border-2 transition-all ${program === '2' ? 'bg-slate-900 border-black text-white' : 'bg-white border-slate-200 text-slate-400'}`}>
                             Gemini
                           </button>
                      </div>
                    </div>
 
-                   <div className="space-y-4 pt-4 border-t border-slate-50">
-                     <label className="text-[11px] font-black text-slate-400 block text-right px-2">خصوصية الدرس</label>
+                   <div className="space-y-4 pt-4 border-t-2 border-slate-50">
+                     <label className="text-[11px] font-black text-black block text-right px-2">خصوصية الدرس</label>
                      <div className="flex flex-col gap-2">
                         <button 
                           onClick={() => setIsPublic(true)} 
-                          className={`flex items-center justify-between p-4 rounded-2xl border transition-all ${isPublic ? 'bg-emerald-50 border-emerald-200 text-emerald-700' : 'bg-white border-slate-100 text-slate-400 hover:border-slate-200'}`}
+                          className={`flex items-center justify-between p-4 rounded-2xl border-2 transition-all ${isPublic ? 'bg-emerald-50 border-black text-emerald-700' : 'bg-white border-slate-100 text-slate-400 hover:border-black'}`}
                         >
-                          <div className={`p-1.5 rounded-lg ${isPublic ? 'bg-emerald-500 text-white' : 'bg-slate-100'}`}><Eye size={14} /></div>
+                          <div className={`p-1.5 rounded-lg border border-black ${isPublic ? 'bg-emerald-500 text-white' : 'bg-white'}`}><Eye size={14} /></div>
                           <div className="flex flex-col items-end">
                             <span className="text-[11px] font-black">عام (Public)</span>
                           </div>
@@ -290,9 +304,9 @@ const CreateArticle = () => {
                         
                         <button 
                           onClick={() => setIsPublic(false)} 
-                          className={`flex items-center justify-between p-4 rounded-2xl border transition-all ${!isPublic ? 'bg-amber-50 border-amber-200 text-amber-700' : 'bg-white border-slate-100 text-slate-400 hover:border-slate-200'}`}
+                          className={`flex items-center justify-between p-4 rounded-2xl border-2 transition-all ${!isPublic ? 'bg-amber-50 border-black text-amber-700' : 'bg-white border-slate-100 text-slate-400 hover:border-black'}`}
                         >
-                          <div className={`p-1.5 rounded-lg ${!isPublic ? 'bg-amber-500 text-white' : 'bg-slate-100'}`}><EyeOff size={14} /></div>
+                          <div className={`p-1.5 rounded-lg border border-black ${!isPublic ? 'bg-amber-500 text-white' : 'bg-white'}`}><EyeOff size={14} /></div>
                           <div className="flex flex-col items-end">
                             <span className="text-[11px] font-black">خاص (Private)</span>
                           </div>
