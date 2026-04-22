@@ -27,7 +27,7 @@ const Sidebar = ({ isOpen, onToggle }) => {
         isOpen ? 'w-64 translate-x-0' : 'w-0 translate-x-full invisible lg:visible lg:w-64 lg:translate-x-0'
       }`}
     >
-      <div className={`w-64 flex flex-col h-full bg-white ${isOpen ? 'opacity-100' : 'opacity-0'} transition-opacity duration-300`}>
+      <div className={`w-64 flex flex-col h-full bg-white ${isOpen ? 'opacity-100' : 'opacity-0 lg:opacity-100'} transition-opacity duration-300`}>
         {/* Sidebar Header with Close Button for Mobile */}
         <div className="p-6 border-b border-slate-50 flex items-center justify-between">
           <div className="flex flex-col">
