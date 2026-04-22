@@ -183,13 +183,13 @@ const CreateArticle = () => {
                   </div>
                   
                   <div className="flex flex-col gap-6">
-                    <div className="flex items-center gap-4">
-                       <button onClick={() => removeStep(index)} className="p-2 text-red-400 hover:bg-red-50 hover:text-red-600 rounded-xl transition-all">
+                    <div className="flex items-center gap-3 w-full">
+                       <button onClick={() => removeStep(index)} className="p-2.5 text-red-400 hover:bg-red-50 hover:text-red-500 rounded-xl transition-all shrink-0">
                          <Trash2 size={18} />
                        </button>
                        <input
                          type="text"
-                         className="flex-1 bg-slate-50 border-none rounded-xl px-4 py-3 text-sm font-bold text-slate-700 focus:ring-2 focus:ring-blue-100 transition-all text-right"
+                         className="flex-1 min-w-0 bg-slate-50 border-none rounded-xl px-4 py-3 text-sm font-bold text-slate-700 focus:ring-2 focus:ring-blue-100 transition-all text-right"
                          placeholder={`عنوان الخطوة رقم ${index + 1}`}
                          value={step.title}
                          onChange={(e) => updateStep(index, 'title', e.target.value)}
