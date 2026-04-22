@@ -38,7 +38,7 @@ const Home = () => {
           <div 
             key={program.id}
             onClick={() => navigate(`/program/${program.id}`)}
-            className="group relative bg-white rounded-3xl p-6 border border-slate-100 shadow-sm hover:shadow-lg transition-all duration-500 cursor-pointer overflow-hidden border-b-4 border-b-slate-50 hover:border-b-blue-500 h-[220px]"
+            className="group relative bg-white rounded-3xl p-6 border border-slate-100 shadow-sm hover:shadow-lg transition-all duration-500 cursor-pointer overflow-hidden border-b-4 border-b-slate-50 hover:border-b-blue-500 min-h-[180px] md:h-[220px]"
           >
             {/* Background Image Container */}
             {program.bgImage && (
