@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
 import MainLayout from './components/layout/MainLayout';
 import Loader from './components/common/Loader';
@@ -13,10 +13,11 @@ import ProtectedRoute from './components/auth/ProtectedRoute';
 
 function App() {
   const location = useLocation();
-  const [loading, setLoading] = React.useState(true);
-  const [showLoader, setShowLoader] = React.useState(false);
+  const [loading, setLoading] = useState(true);
+  const [showLoader, setShowLoader] = useState(false);
 
-  React.useEffect(() => {
+  useEffect(() => {
+    // Reset states on every route change
     setLoading(true);
     setShowLoader(false);
 
@@ -28,7 +29,7 @@ function App() {
     // Delay showing the UI loader to avoid flicker for fast users
     const showLoaderTimer = setTimeout(() => {
       setShowLoader(true);
-    }, 450); // Only show if loading takes longer than 450ms
+    }, 450); 
 
     return () => {
       clearTimeout(loadingTimer);
@@ -37,7 +38,6 @@ function App() {
   }, [location.pathname]);
 
   const isLoginPage = location.pathname === '/admin/login';
-
 
   const AppRoutes = (
     <Routes>
@@ -60,7 +60,7 @@ function App() {
 
   return (
     <>
-      {(loading && showLoader) && <Loader />}
+      {loading && showLoader && <Loader />}
       {isLoginPage ? AppRoutes : <MainLayout>{AppRoutes}</MainLayout>}
     </>
   );
