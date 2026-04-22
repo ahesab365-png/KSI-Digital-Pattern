@@ -171,71 +171,96 @@ const CreateArticle = () => {
             </div>
 
             {/* Steps Container */}
-            <div className="space-y-6">
-              <div className="flex items-center justify-between px-2">
-                 <button onClick={addStep} className="bg-black text-white p-2.5 rounded-xl hover:bg-slate-800 transition-all shadow-sm border-2 border-black">
-                   <Plus size={20} />
-                 </button>
-                 <h3 className="text-lg font-black text-black">خطوات التنفيذ</h3>
+            <div className="space-y-12">
+              <div className="flex items-center justify-end px-2 border-b-2 border-black pb-4">
+                 <h3 className="text-xl font-black text-black">خطوات التنفيذ</h3>
               </div>
 
-              {steps.map((step, index) => (
-                <div key={index} className="bg-white rounded-[2rem] p-5 md:p-8 shadow-sm border-2 border-black relative group">
-                  <div className="absolute -right-2 -top-2 w-10 h-10 rounded-xl bg-black text-white flex items-center justify-center text-sm font-black z-10 shadow-lg border-2 border-white">
-                    {index + 1}
+              {steps.length === 0 && (
+                <button 
+                  onClick={addStep}
+                  className="w-full py-10 rounded-[2rem] border-4 border-dashed border-slate-200 hover:border-black hover:bg-slate-50 transition-all flex flex-col items-center justify-center gap-3 group"
+                >
+                  <div className="w-14 h-14 rounded-full bg-white border-2 border-black flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <Plus size={24} className="text-black" />
                   </div>
-                  
-                  <div className="flex flex-col gap-6 text-right">
-                    {/* Step Title */}
-                    <div className="space-y-2">
-                       <label className="text-[10px] font-black text-black block pr-1">عنوان المرحلة / الخطوة</label>
-                       <div className="flex items-center gap-3 w-full">
-                          <button onClick={() => removeStep(index)} className="p-2.5 text-red-600 bg-white border-2 border-black hover:bg-red-50 rounded-xl transition-all shrink-0">
-                            <Trash2 size={18} />
-                          </button>
-                          <input
-                            type="text"
-                            className="flex-1 min-w-0 bg-white border-2 border-black rounded-xl px-4 py-3 text-sm font-bold text-slate-700 focus:ring-4 focus:ring-slate-100 transition-all text-right"
-                            placeholder="مثال: مرحلة قص القماش"
-                            value={step.title}
-                            onChange={(e) => updateStep(index, 'title', e.target.value)}
-                          />
-                       </div>
+                  <span className="font-black text-slate-400 group-hover:text-black">ابدأ بإضافة الخطوة الأولى</span>
+                </button>
+              )}
+
+              {steps.map((step, index) => (
+                <div key={index} className="space-y-10">
+                  <div className="bg-white rounded-[2rem] p-5 md:p-8 shadow-sm border-2 border-black relative group">
+                    <div className="absolute -right-2 -top-2 w-10 h-10 rounded-xl bg-black text-white flex items-center justify-center text-sm font-black z-10 shadow-lg border-2 border-white">
+                      {index + 1}
                     </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                       <div className="space-y-2">
-                         <label className="text-[10px] font-black text-black block pr-1">تفاصيل المرحلة (الشرح)</label>
-                         <textarea
-                           className="w-full h-44 bg-white border-2 border-black rounded-2xl p-4 text-sm font-medium text-slate-600 focus:ring-4 focus:ring-slate-100 transition-all text-right resize-none"
-                           placeholder="اشرح هذه الخطوة بالتفصيل للمتدربين..."
-                           value={step.text}
-                           onChange={(e) => updateStep(index, 'text', e.target.value)}
-                         />
-                       </div>
-
-                       <div className="space-y-2">
-                         <label className="text-[10px] font-black text-black block pr-1">صورة توضيحية للمرحلة</label>
-                         <div className="relative h-44 rounded-2xl border-2 border-black bg-slate-50 hover:bg-white transition-all group overflow-hidden">
-                            {step.isUploading ? (
-                                <div className="absolute inset-0 flex items-center justify-center bg-white/60"><Loader2 className="animate-spin text-black" /></div>
-                            ) : step.image ? (
-                              <>
-                                <img src={step.image} className="w-full h-full object-contain p-2" alt="Step" />
-                                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
-                                   <button onClick={() => updateStep(index, 'image', null)} className="bg-white border-2 border-black text-red-600 p-2 rounded-lg hover:scale-110 transition-transform"><Trash2 size={18} /></button>
-                                </div>
-                              </>
-                            ) : (
-                              <label className="absolute inset-0 flex flex-col items-center justify-center cursor-pointer">
-                                <input type="file" className="hidden" onChange={(e) => handleImageUpload(index, e.target.files[0])} />
-                                <ImageIcon size={28} className="text-slate-300 mb-2" />
-                                <span className="text-[10px] font-black text-black bg-white px-3 py-1 rounded-full border border-black">رفع صورة</span>
-                              </label>
-                            )}
+                    
+                    <div className="flex flex-col gap-6 text-right">
+                      {/* Step Title */}
+                      <div className="space-y-2">
+                         <label className="text-[10px] font-black text-black block pr-1">عنوان المرحلة / الخطوة</label>
+                         <div className="flex items-center gap-3 w-full">
+                            <button onClick={() => removeStep(index)} className="p-2.5 text-red-600 bg-white border-2 border-black hover:bg-red-50 rounded-xl transition-all shrink-0">
+                              <Trash2 size={18} />
+                            </button>
+                            <input
+                              type="text"
+                              className="flex-1 min-w-0 bg-white border-2 border-black rounded-xl px-4 py-3 text-sm font-bold text-slate-700 focus:ring-4 focus:ring-slate-100 transition-all text-right"
+                              placeholder="مثال: مرحلة قص القماش"
+                              value={step.title}
+                              onChange={(e) => updateStep(index, 'title', e.target.value)}
+                            />
                          </div>
-                       </div>
+                      </div>
+
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                         <div className="space-y-2">
+                           <label className="text-[10px] font-black text-black block pr-1">تفاصيل المرحلة (الشرح)</label>
+                           <textarea
+                             className="w-full h-44 bg-white border-2 border-black rounded-2xl p-4 text-sm font-medium text-slate-600 focus:ring-4 focus:ring-slate-100 transition-all text-right resize-none"
+                             placeholder="اشرح هذه الخطوة بالتفصيل للمتدربين..."
+                             value={step.text}
+                             onChange={(e) => updateStep(index, 'text', e.target.value)}
+                           />
+                         </div>
+
+                         <div className="space-y-2">
+                           <label className="text-[10px] font-black text-black block pr-1">صورة توضيحية للمرحلة</label>
+                           <div className="relative h-44 rounded-2xl border-2 border-black bg-slate-50 hover:bg-white transition-all group overflow-hidden">
+                              {step.isUploading ? (
+                                  <div className="absolute inset-0 flex items-center justify-center bg-white/60"><Loader2 className="animate-spin text-black" /></div>
+                              ) : step.image ? (
+                                <>
+                                  <img src={step.image} className="w-full h-full object-contain p-2" alt="Step" />
+                                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
+                                     <button onClick={() => updateStep(index, 'image', null)} className="bg-white border-2 border-black text-red-600 p-2 rounded-lg hover:scale-110 transition-transform"><Trash2 size={18} /></button>
+                                  </div>
+                                </>
+                              ) : (
+                                <label className="absolute inset-0 flex flex-col items-center justify-center cursor-pointer">
+                                  <input type="file" className="hidden" onChange={(e) => handleImageUpload(index, e.target.files[0])} />
+                                  <ImageIcon size={28} className="text-slate-300 mb-2" />
+                                  <span className="text-[10px] font-black text-black bg-white px-3 py-1 rounded-full border border-black">رفع صورة</span>
+                                </label>
+                              )}
+                           </div>
+                         </div>
+                      </div>
                     </div>
+                  </div>
+
+                  {/* Sequential Add Button */}
+                  <div className="flex justify-center relative">
+                    <div className="absolute inset-0 flex items-center" aria-hidden="true">
+                      <div className="w-full border-t-2 border-dashed border-slate-200"></div>
+                    </div>
+                    <button 
+                      onClick={addStep}
+                      className="relative flex items-center gap-2 bg-white border-2 border-black px-6 py-2.5 rounded-full hover:bg-black hover:text-white transition-all group shadow-md"
+                    >
+                      <Plus size={16} className="group-hover:rotate-90 transition-transform duration-300" />
+                      <span className="text-xs font-black">إضافة الخطوة التالية</span>
+                    </button>
                   </div>
                 </div>
               ))}
