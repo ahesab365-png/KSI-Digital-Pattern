@@ -137,4 +137,28 @@ body {
 
 #root {
   width: 100%;
+  overflow-x: hidden;
+}
+
+p, span, h1, h2, h3, h4, h5, h6 {
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  hyphens: auto;
+}
+
+/* Prevent Quill toolbar from breaking layout on small screens */
+.ql-toolbar.ql-snow {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 4px;
+}
+
+@media (max-width: 640px) {
+  .ql-toolbar.ql-snow {
+    padding: 8px !important;
+  }
+  .ql-formats {
+    margin-right: 0 !important;
+  }
 }

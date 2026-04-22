@@ -6,48 +6,56 @@ import { articleService } from '../services/articleService';
 const StepCard = ({ step, index }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const text = step.text || "لا يوجد وصف لهذه الخطوة.";
-  const isLongText = text.length > 350; // about 10 lines of text
+  const isLongText = text.length > 350; 
 
   return (
-    <div className="bg-white rounded-3xl border border-slate-50 shadow-sm overflow-hidden border-b-2 border-b-slate-100">
-       <div className="p-6 md:p-8 flex flex-col md:flex-row gap-8">
-          <div className="flex-1 order-2 md:order-1 relative">
-            <div className="flex items-center gap-3 mb-3">
-               <span className="w-8 h-8 rounded-full bg-blue-600 shrink-0 text-white flex items-center justify-center font-bold text-xs shadow-md">{index + 1}</span>
-               <h4 className="font-bold text-slate-800 text-sm break-all">{step.title || `الخطوة رقم ${index + 1}`}</h4>
+    <div className="bg-white rounded-[2rem] border border-slate-50 shadow-sm overflow-hidden border-b-2 border-b-slate-100 relative group">
+       {/* Mobile Step Badge */}
+       <div className="absolute right-4 top-4 w-10 h-10 rounded-2xl bg-blue-600 text-white flex items-center justify-center font-black text-xs shadow-lg md:hidden z-10">
+         {index + 1}
+       </div>
+
+       <div className="p-5 md:p-10 flex flex-col md:flex-row gap-6 md:gap-14">
+          <div className="flex-1 order-2 md:order-1 relative pt-10 md:pt-0">
+            <div className="hidden md:flex items-center gap-4 mb-6">
+               <span className="w-10 h-10 rounded-2xl bg-slate-900 shrink-0 text-white flex items-center justify-center font-black text-sm shadow-md">{index + 1}</span>
+               <h4 className="font-black text-slate-800 text-lg">{step.title || `الخطوة رقم ${index + 1}`}</h4>
             </div>
-            <div className={`relative ${!isExpanded && isLongText ? 'max-h-[220px] overflow-hidden' : ''}`}>
-               <p className="text-slate-600 text-sm leading-relaxed pr-11 break-all whitespace-pre-wrap w-full block">
-                 {text}
-               </p>
-               {!isExpanded && isLongText && (
-                 <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent flex items-end justify-center pb-1">
-                    <button 
-                      onClick={() => setIsExpanded(true)}
-                      className="text-blue-600 text-xs font-bold hover:underline bg-white px-4 py-1.5 rounded-full shadow-md border border-slate-100"
-                    >
-                      إظهار المزيد
-                    </button>
-                 </div>
-               )}
+            {/* Mobile Title */}
+            <h4 className="md:hidden font-black text-slate-800 text-base mb-4 pr-12">{step.title || `الخطوة رقم ${index + 1}`}</h4>
+
+            <div className={`relative ${!isExpanded && isLongText ? 'max-h-[240px] overflow-hidden' : ''}`}>
+                <p className="text-slate-600 text-sm leading-[1.8] md:pr-14 break-words whitespace-pre-wrap">
+                  {text}
+                </p>
+                {!isExpanded && isLongText && (
+                  <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent flex items-end justify-center pb-2">
+                     <button 
+                       onClick={() => setIsExpanded(true)}
+                       className="text-blue-600 text-xs font-black hover:underline bg-white px-6 py-2 rounded-full shadow-lg border border-slate-100"
+                     >
+                       مشاهدة المزيد
+                     </button>
+                  </div>
+                )}
             </div>
             {isExpanded && isLongText && (
                <button 
                   onClick={() => setIsExpanded(false)}
-                  className="text-slate-400 text-[10px] font-bold hover:text-blue-600 mt-4 pr-11 transition-colors"
+                  className="text-slate-400 text-[11px] font-black hover:text-blue-600 mt-6 md:pr-14 transition-colors"
                >
-                 إخفاء النص العالي
+                 إخفاء التفاصيل
                </button>
             )}
           </div>
           
-          <div className="w-full md:w-72 min-h-[12rem] bg-slate-50 rounded-2xl flex items-center justify-center text-slate-300 order-1 md:order-2 overflow-hidden border border-slate-100">
+          <div className="w-full md:w-[350px] bg-slate-50/50 rounded-[2rem] flex items-center justify-center order-1 md:order-2 overflow-hidden border border-slate-50 min-h-[220px] shadow-inner">
              {step.image ? (
-               <img src={step.image} alt={`Step ${index + 1}`} className="w-full h-auto max-h-[400px] object-contain p-2" />
+               <img src={step.image} alt={`Step ${index + 1}`} className="w-full h-full object-contain p-2" />
              ) : (
                <div className="flex flex-col items-center py-12">
-                 <ImageIcon size={24} className="opacity-20 mb-1" />
-                 <span className="text-[10px]">لا توجد صورة لهذه الخطوة</span>
+                 <ImageIcon size={40} className="opacity-10 mb-2" />
+                 <span className="text-[10px] font-black text-slate-300">بدون صورة توضيحية</span>
                </div>
              )}
           </div>
