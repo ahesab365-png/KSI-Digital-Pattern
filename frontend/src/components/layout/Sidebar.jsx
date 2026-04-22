@@ -23,8 +23,8 @@ const Sidebar = ({ isOpen, onToggle }) => {
 
   return (
     <aside 
-      className={`fixed right-0 top-0 h-screen bg-white border-l border-slate-100 shadow-2xl z-[100] transition-all duration-500 ease-in-out flex flex-col font-arabic ${
-        isOpen ? 'w-64 translate-x-0' : 'w-0 translate-x-full'
+      className={`fixed right-0 top-0 h-screen bg-white border-l border-slate-100 shadow-2xl z-[150] transition-all duration-500 ease-in-out flex flex-col font-arabic ${
+        isOpen ? 'w-64 translate-x-0' : 'w-0 translate-x-full invisible lg:visible lg:w-64 lg:translate-x-0'
       }`}
     >
       <div className={`w-64 flex flex-col h-full bg-white ${isOpen ? 'opacity-100' : 'opacity-0'} transition-opacity duration-300`}>
