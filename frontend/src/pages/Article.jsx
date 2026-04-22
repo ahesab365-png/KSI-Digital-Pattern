@@ -1,139 +1,152 @@
-import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowRight, BookOpen, Clock, Tag, ImageIcon } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { useParams, Link } from 'react-router-dom';
 import { articleService } from '../services/articleService';
-
-const StepCard = ({ step, index }) => {
-  const [isExpanded, setIsExpanded] = useState(false);
-  const text = step.text || "لا يوجد وصف لهذه الخطوة.";
-  const isLongText = text.length > 350; 
-
-  return (
-    <div className="bg-white rounded-[2rem] border-2 border-black shadow-sm overflow-hidden relative group">
-       {/* Mobile Step Badge */}
-       <div className="absolute right-4 top-4 w-10 h-10 rounded-xl bg-black text-white flex items-center justify-center font-black text-xs shadow-lg md:hidden z-10 border-2 border-white">
-         {index + 1}
-       </div>
-
-       <div className="p-5 md:p-10 flex flex-col md:flex-row gap-6 md:gap-14 text-right">
-          <div className="flex-1 order-2 md:order-1 relative pt-10 md:pt-0">
-            <div className="hidden md:flex items-center gap-4 mb-6 border-b-2 border-black pb-4">
-               <span className="w-10 h-10 rounded-xl bg-black shrink-0 text-white flex items-center justify-center font-black text-sm shadow-md">{index + 1}</span>
-               <h4 className="font-black text-black text-xl">{step.title || `الخطوة رقم ${index + 1}`}</h4>
-            </div>
-            {/* Mobile Title */}
-            <h4 className="md:hidden font-black text-black text-lg mb-4 pr-12 border-b-2 border-black pb-2">{step.title || `الخطوة رقم ${index + 1}`}</h4>
-
-            <div className={`relative ${!isExpanded && isLongText ? 'max-h-[240px] overflow-hidden' : ''}`}>
-                <p className="text-slate-700 text-base md:text-lg leading-[1.8] md:pr-14 break-words whitespace-pre-wrap">
-                  {text}
-                </p>
-                {!isExpanded && isLongText && (
-                  <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent flex items-end justify-center pb-2">
-                     <button 
-                       onClick={() => setIsExpanded(true)}
-                       className="text-white text-xs font-black bg-black px-8 py-2.5 rounded-full shadow-lg border-2 border-white"
-                     >
-                       اقرأ المزيد
-                     </button>
-                  </div>
-                )}
-            </div>
-            {isExpanded && isLongText && (
-               <button 
-                  onClick={() => setIsExpanded(false)}
-                  className="text-black text-xs font-black hover:underline mt-6 md:pr-14 transition-colors"
-               >
-                 طي التفاصيل
-               </button>
-            )}
-          </div>
-          
-          <div className="w-full md:w-[350px] bg-slate-50 rounded-[2rem] flex items-center justify-center order-1 md:order-2 overflow-hidden border-2 border-black min-h-[220px] shadow-inner">
-             {step.image ? (
-               <img src={step.image} alt={`Step ${index + 1}`} className="w-full h-full object-contain p-2" />
-             ) : (
-               <div className="flex flex-col items-center py-12">
-                 <ImageIcon size={40} className="text-slate-200 mb-2" />
-                 <span className="text-[10px] font-black text-slate-300">بدون صورة توضيحية</span>
-               </div>
-             )}
-          </div>
-       </div>
-    </div>
-  );
-};
+import { ArrowRight, BookOpen, Clock, Tag, ChevronLeft, Image as ImageIcon, X, Maximize2 } from 'lucide-react';
 
 const Article = () => {
   const { id } = useParams();
-  const navigate = useNavigate();
   const [article, setArticle] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [selectedImage, setSelectedImage] = useState(null);
 
   useEffect(() => {
     const fetchArticle = async () => {
-      const art = await articleService.getById(id);
-      if (art) setArticle(art);
+      const data = await articleService.getById(id);
+      setArticle(data);
+      setLoading(false);
     };
     fetchArticle();
   }, [id]);
 
-  if (!article) return <div className="text-center py-20 font-arabic text-slate-400">جاري تحميل الشرح...</div>;
+  if (loading) return (
+    <div className="min-h-[60vh] flex items-center justify-center">
+      <div className="animate-spin rounded-full h-12 w-12 border-4 border-black border-t-transparent"></div>
+    </div>
+  );
+
+  if (!article) return <div className="text-center py-20 font-black">المقال غير موجود</div>;
 
   return (
-    <div className="max-w-4xl mx-auto py-6 font-arabic px-6 md:px-8">
-      {/* Header */}
-      <div className="mb-8 text-right">
-        <button 
-          onClick={() => navigate(-1)}
-          className="flex items-center gap-2 text-slate-400 hover:text-slate-800 transition-colors mb-4 text-xs"
+    <div className="max-w-5xl mx-auto font-arabic px-4 md:px-0 pb-20">
+      {/* Lightbox Modal */}
+      {selectedImage && (
+        <div 
+          className="fixed inset-0 z-[1000] bg-black/95 flex items-center justify-center p-4 animate-in fade-in duration-300"
+          onClick={() => setSelectedImage(null)}
         >
-          <span className="font-medium">العودة</span>
-          <ArrowRight size={14} />
-        </button>
-        
-        <div className="flex items-center gap-2 text-blue-600 text-[10px] font-bold uppercase tracking-widest mb-3">
-           <Tag size={12} />
-           <span>برنامج {article.program === '1' ? 'Gerber' : 'Gemini'} / {article.category}</span>
+          <button className="absolute top-6 right-6 text-white hover:rotate-90 transition-transform">
+            <X size={32} />
+          </button>
+          <img 
+            src={selectedImage} 
+            className="max-w-full max-h-full object-contain rounded-lg shadow-2xl animate-in zoom-in-95 duration-300" 
+            alt="Preview" 
+          />
         </div>
-        
-        <h1 className="text-2xl md:text-3xl font-extrabold text-slate-900 leading-tight mb-4 break-all">
+      )}
+
+      {/* Navigation */}
+      <div className="flex items-center justify-between mb-8 text-slate-400">
+        <div className="flex items-center gap-2">
+           <span className="text-xs bg-slate-100 text-slate-500 px-3 py-1 rounded-full font-bold">
+             {article.mainCategory === 'women' ? 'حريمي' : article.mainCategory === 'men' ? 'رجالي' : 'أطفال'}
+           </span>
+           <ChevronLeft size={14} />
+           <span className="text-xs font-bold text-black">{article.category}</span>
+        </div>
+        <Link to={`/program/${article.program}/${article.mainCategory}`} className="text-xs hover:text-black flex items-center gap-1 transition-colors font-bold">
+          العودة للأقسام <ArrowRight size={14} />
+        </Link>
+      </div>
+
+      {/* Header Info */}
+      <div className="text-right mb-10">
+        <h1 className="text-3xl md:text-5xl font-black text-black mb-6 leading-tight">
           {article.title}
         </h1>
-
-        <div className="flex items-center gap-4 text-slate-400 text-[11px] border-b border-slate-100 pb-6">
-           <div className="flex items-center gap-1.5">
-             <BookOpen size={14} />
-             <span>8 دقائق قراءة</span>
+        <div className="flex flex-wrap justify-end gap-4 text-slate-400 font-bold text-[10px] md:text-xs">
+           <div className="flex items-center gap-1.5 bg-white border border-slate-100 px-3 py-1.5 rounded-lg shadow-sm">
+             <Clock size={14} className="text-black" />
+             <span>نُشر في {new Date(article.createdAt).toLocaleDateString('ar-EG')}</span>
            </div>
-           <div className="flex items-center gap-1.5">
-             <Clock size={14} />
-             <span>نُشر في: {new Date(article.createdAt).toLocaleDateString('ar-EG')}</span>
+           <div className="flex items-center gap-1.5 bg-white border border-slate-100 px-3 py-1.5 rounded-lg shadow-sm">
+             <Tag size={14} className="text-black" />
+             <span>{article.program === '1' ? 'Gerber CAD' : 'Gemini CAD'}</span>
            </div>
         </div>
       </div>
 
-      {/* Content */}
-      <article className="prose prose-slate max-w-none text-right">
-        {/* Intro */}
-        <div className="ql-snow">
+      {/* Unified Article Content Container */}
+      <div className="bg-white rounded-[2.5rem] border-2 border-black shadow-xl overflow-hidden">
+        
+        {/* Article Introduction Section */}
+        <div className="p-6 md:p-12 border-b-2 border-black bg-slate-50/30">
+          <div className="flex items-center justify-end gap-3 mb-6">
+            <h2 className="text-xl font-black text-black">مقدمة الدرس</h2>
+            <BookOpen className="text-black" size={24} />
+          </div>
           <div 
-            className="ql-editor text-slate-600 text-sm leading-relaxed mb-10 overflow-hidden quill-content !p-0 !min-h-0 break-all whitespace-pre-wrap w-full"
+            className="prose prose-slate max-w-none text-right font-medium leading-[2] text-slate-700"
             dangerouslySetInnerHTML={{ __html: article.content }}
           />
         </div>
 
-        {/* Steps Grid */}
-        <div className="space-y-8">
-          <h3 className="text-lg font-bold text-slate-800 border-r-4 border-blue-600 pr-3">خطوات العمل التنفيذية</h3>
-          
-          {article.steps && article.steps.map((step, index) => (
-            <StepCard key={index} step={step} index={index} />
-          ))}
+        {/* Steps Section - Directly integrated */}
+        <div className="p-6 md:p-12 space-y-16 bg-white">
+           <div className="flex items-center justify-end gap-3 mb-10 border-b-2 border-black pb-4">
+              <h2 className="text-2xl font-black text-black">خطوات التنفيذ</h2>
+           </div>
+
+           {article.steps && article.steps.map((step, index) => (
+             <div key={index} className="relative group">
+                {/* Step Marker */}
+                <div className="hidden md:flex absolute -right-16 top-0 w-12 h-12 rounded-xl bg-black text-white items-center justify-center font-black text-lg shadow-lg border-2 border-white">
+                  {index + 1}
+                </div>
+
+                <div className="flex flex-col md:flex-row gap-8 text-right">
+                  {/* Step Text Side */}
+                  <div className="flex-1 space-y-4">
+                     <div className="flex items-center justify-between md:justify-end gap-4 border-b border-slate-100 pb-3">
+                        <div className="md:hidden w-8 h-8 rounded-lg bg-black text-white flex items-center justify-center font-black text-sm">
+                          {index + 1}
+                        </div>
+                        <h3 className="font-black text-black text-lg md:text-xl">{step.title || `المرحلة ${index + 1}`}</h3>
+                     </div>
+                     <p className="text-slate-600 text-sm md:text-base leading-[2] whitespace-pre-wrap">
+                        {step.text}
+                     </p>
+                  </div>
+
+                  {/* Step Image Side */}
+                  <div 
+                    className="w-full md:w-[320px] h-[240px] rounded-3xl border-2 border-black bg-slate-50 relative overflow-hidden group/img cursor-zoom-in"
+                    onClick={() => step.image && setSelectedImage(step.image)}
+                  >
+                    {step.image ? (
+                      <>
+                        <img src={step.image} className="w-full h-full object-cover transition-transform duration-500 group-hover/img:scale-110" alt="Step" />
+                        <div className="absolute inset-0 bg-black/20 opacity-0 group-hover/img:opacity-100 transition-opacity flex items-center justify-center">
+                           <div className="bg-white/90 p-3 rounded-full shadow-lg">
+                              <Maximize2 size={20} className="text-black" />
+                           </div>
+                        </div>
+                      </>
+                    ) : (
+                      <div className="flex flex-col items-center justify-center h-full opacity-20">
+                         <ImageIcon size={48} />
+                         <span className="text-[10px] font-black mt-2 uppercase">No Image Available</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+             </div>
+           ))}
         </div>
-      </article>
-      
-      <div className="mt-20 border-t pt-8 text-center text-[10px] text-slate-200 uppercase tracking-widest">
-        KSI Digital Pattern Education
+      </div>
+
+      <div className="mt-16 text-center">
+        <p className="text-[10px] font-bold text-slate-300 uppercase tracking-[0.3em]">End of Tutorial - KSI Digital Pattern</p>
       </div>
     </div>
   );
