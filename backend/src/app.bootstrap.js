@@ -56,6 +56,6 @@ async function bootstrap() {
         })
     })
     
-    app.listen(port, () => console.log(`Server is running on port ${port}!`))
+    return app;
 }
 export default bootstrap
