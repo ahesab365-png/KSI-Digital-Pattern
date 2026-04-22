@@ -14,16 +14,30 @@ import ProtectedRoute from './components/auth/ProtectedRoute';
 function App() {
   const location = useLocation();
   const [loading, setLoading] = React.useState(true);
+  const [showLoader, setShowLoader] = React.useState(false);
 
   React.useEffect(() => {
     setLoading(true);
-    const timer = setTimeout(() => setLoading(false), 800);
-    return () => clearTimeout(timer);
+    setShowLoader(false);
+
+    // Initial load/navigation timer
+    const loadingTimer = setTimeout(() => {
+      setLoading(false);
+    }, 600);
+
+    // Delay showing the UI loader to avoid flicker for fast users
+    const showLoaderTimer = setTimeout(() => {
+      setShowLoader(true);
+    }, 450); // Only show if loading takes longer than 450ms
+
+    return () => {
+      clearTimeout(loadingTimer);
+      clearTimeout(showLoaderTimer);
+    };
   }, [location.pathname]);
 
-  // Decide if we should show the MainLayout (with Sidebar/Header)
-  // Only hide it for the login page
   const isLoginPage = location.pathname === '/admin/login';
+
 
   const AppRoutes = (
     <Routes>
@@ -46,7 +60,7 @@ function App() {
 
   return (
     <>
-      {loading && <Loader />}
+      {(loading && showLoader) && <Loader />}
       {isLoginPage ? AppRoutes : <MainLayout>{AppRoutes}</MainLayout>}
     </>
   );
