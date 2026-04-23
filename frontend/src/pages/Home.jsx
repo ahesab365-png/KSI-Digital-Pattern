@@ -28,7 +28,7 @@ const Home = () => {
     <div className="max-w-4xl mx-auto py-6 md:py-10 font-arabic px-4 md:px-0">
       {/* Hero Section - Compact */}
       <div className="mb-12 text-right">
-        <h1 className="text-2xl md:text-3xl font-bold text-slate-800 mb-1 tracking-tight">منصة KSI Digital Pattern تعليم التصميم</h1>
+        <h1 className="text-2xl md:text-3xl font-bold text-slate-800 mb-1 tracking-tight">منصة KSI Digital Pattern تعليم الباترون</h1>
         <p className="text-slate-400 text-sm">ابدأ رحلتك في عالم الموضة والابتكار</p>
       </div>
 
@@ -86,7 +86,7 @@ const Home = () => {
       <div className="bg-white rounded-3xl p-8 flex flex-col md:flex-row justify-between items-center gap-6 border border-slate-100 shadow-lg">
         <div className="text-right flex-1">
           <h3 className="text-base font-bold text-slate-800 mb-1">تحتاج لتوجيه؟</h3>
-          <p className="text-slate-400 text-xs">تحدث مع خبراء التصميم لدينا لمساعدتك في أي وقت.</p>
+          <p className="text-slate-400 text-xs">تحدث مع خبراء الباترون لدينا لمساعدتك في أي وقت.</p>
         </div>
         <button className="w-full md:w-auto bg-blue-600 text-white px-8 py-3 rounded-xl text-xs font-bold shadow-md hover:bg-blue-700 transition-all flex items-center justify-center gap-2 border border-transparent">
           <span>تواصل معنا</span>

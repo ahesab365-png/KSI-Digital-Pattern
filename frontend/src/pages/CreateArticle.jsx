@@ -411,7 +411,7 @@ const CreateArticle = () => {
                    </div>
 
                    <div className="space-y-4 pt-4 border-t-2 border-slate-50">
-                     <label className="text-[11px] font-black text-black block text-right px-2">برنامج التصميم</label>
+                     <label className="text-[11px] font-black text-black block text-right px-2">برنامج الباترون</label>
                      <div className="grid grid-cols-2 gap-3">
                            <button onClick={() => setProgram('1')} className={`py-3.5 rounded-2xl text-[11px] font-black border transition-all ${program === '1' ? 'bg-blue-600 border-blue-600 text-white shadow-lg shadow-blue-100' : 'bg-white border-slate-200 text-slate-400 hover:border-blue-600 hover:text-blue-600'}`}>
                             Gerber
