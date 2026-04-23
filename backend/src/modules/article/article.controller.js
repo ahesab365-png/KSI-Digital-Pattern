@@ -16,14 +16,16 @@ const extractPublicId = (url) => {
 export const getArticles = async (req, res, next) => {
     try {
         console.log("Fetching all articles...");
-        const { program, mainCategory } = req.query;
+        const { program, mainCategory, status } = req.query;
         const filter = {};
         if (program) filter.program = program;
         if (mainCategory) filter.mainCategory = mainCategory;
+        if (status) filter.status = status;
         
         if (program || mainCategory) {
-            filter.isPublic = true;
+            filter.status = 'active';
         }
+
 
         const articles = await ArticleModel.find(filter).sort({ createdAt: -1 });
         console.log(`Found ${articles.length} articles.`);
@@ -60,13 +62,18 @@ export const createArticle = async (req, res, next) => {
 export const updateArticle = async (req, res, next) => {
     try {
         const { id } = req.params;
-        const article = await ArticleModel.findByIdAndUpdate(id, req.body, { new: true });
+        const updateData = { ...req.body };
+        if (updateData.status) {
+            updateData.isPublic = updateData.status === 'active';
+        }
+        const article = await ArticleModel.findByIdAndUpdate(id, updateData, { new: true });
         if (!article) return res.status(404).json({ message: "Article not found" });
         return res.status(200).json({ message: "Article updated successfully", article });
     } catch (error) {
         return next(error);
     }
 };
+
 
 export const deleteArticle = async (req, res, next) => {
     try {
@@ -95,10 +102,83 @@ export const deleteArticle = async (req, res, next) => {
                 }
             }
         }
-
         await ArticleModel.findByIdAndDelete(id);
         return res.status(200).json({ message: "Article and associated images deleted successfully" });
     } catch (error) {
         return next(error);
     }
 };
+
+export const bulkDeleteArticles = async (req, res, next) => {
+    try {
+        const { ids } = req.body; // Array of IDs
+        if (!ids || !ids.length) return res.status(400).json({ message: "No IDs provided" });
+
+        const articles = await ArticleModel.find({ _id: { $in: ids } });
+        
+        for (const article of articles) {
+            const imageUrls = [];
+            if (article.image) imageUrls.push(article.image);
+            if (article.steps && Array.isArray(article.steps)) {
+                article.steps.forEach(step => {
+                    if (step.image) imageUrls.push(step.image);
+                });
+            }
+
+            for (const url of imageUrls) {
+                const publicId = extractPublicId(url);
+                if (publicId) {
+                    try {
+                        await cloudinary.uploader.destroy(publicId);
+                    } catch (err) {
+                        console.error(`Failed to delete Cloudinary image: ${publicId}`, err);
+                    }
+                }
+            }
+        }
+
+        await ArticleModel.deleteMany({ _id: { $in: ids } });
+        return res.status(200).json({ message: "Articles deleted successfully" });
+    } catch (error) {
+        return next(error);
+    }
+};
+
+export const bulkUpdateArticlesStatus = async (req, res, next) => {
+    try {
+        const { ids, status } = req.body;
+        if (!ids || !ids.length) return res.status(400).json({ message: "No IDs provided" });
+
+        await ArticleModel.updateMany(
+            { _id: { $in: ids } },
+            { $set: { status, isPublic: status === 'active' } }
+        );
+
+        return res.status(200).json({ message: "Articles status updated successfully" });
+    } catch (error) {
+        return next(error);
+    }
+};
+
+export const incrementViews = async (req, res, next) => {
+    try {
+        const { id } = req.params;
+        await ArticleModel.findByIdAndUpdate(id, { $inc: { views: 1 } });
+        return res.status(200).json({ message: "Views incremented" });
+    } catch (error) {
+        return next(error);
+    }
+};
+
+export const incrementClicks = async (req, res, next) => {
+    try {
+        const { id } = req.params;
+        await ArticleModel.findByIdAndUpdate(id, { $inc: { clicks: 1 } });
+        return res.status(200).json({ message: "Clicks incremented" });
+    } catch (error) {
+        return next(error);
+    }
+};
+
+
+

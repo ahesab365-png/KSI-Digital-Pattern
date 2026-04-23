@@ -144,5 +144,63 @@ export const articleService = {
         console.error("articleService remove error:", error);
         return false;
     }
+  },
+  // Update status for multiple articles
+  bulkUpdateStatus: async (ids, status) => {
+    try {
+        const token = localStorage.getItem('admin_token');
+        const res = await fetch(`${ARTICLES_URL}/bulk-status`, {
+          method: 'PATCH',
+          headers: { 
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({ ids, status })
+        });
+        return res.ok;
+    } catch (error) {
+        console.error("articleService bulkUpdateStatus error:", error);
+        return false;
+    }
+  },
+
+
+  // Remove multiple articles
+  bulkRemove: async (ids) => {
+    try {
+        const token = localStorage.getItem('admin_token');
+        const res = await fetch(`${ARTICLES_URL}/bulk-delete`, {
+          method: 'DELETE',
+          headers: { 
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({ ids })
+        });
+        return res.ok;
+    } catch (error) {
+        console.error("articleService bulkRemove error:", error);
+        return false;
+    }
+  },
+  
+  // Track View
+  trackView: async (id) => {
+    try {
+        await fetch(`${ARTICLES_URL}/${id}/view`, { method: 'POST' });
+    } catch (error) {
+        console.error("trackView error:", error);
+    }
+  },
+
+  // Track Click
+  trackClick: async (id) => {
+    try {
+        await fetch(`${ARTICLES_URL}/${id}/click`, { method: 'POST' });
+    } catch (error) {
+        console.error("trackClick error:", error);
+    }
   }
 };
+
+

@@ -14,9 +14,14 @@ const Article = () => {
       const data = await articleService.getById(id);
       setArticle(data);
       setLoading(false);
+      // Track view
+      if (data) {
+        articleService.trackView(id);
+      }
     };
     fetchArticle();
   }, [id]);
+
 
   if (loading) return (
     <div className="min-h-[60vh] flex items-center justify-center">

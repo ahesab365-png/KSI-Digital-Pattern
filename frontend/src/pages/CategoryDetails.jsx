@@ -65,8 +65,10 @@ const CategoryDetails = () => {
             <Link 
               to={`/article/${sub.articleId}`}
               key={sub.articleId}
+              onClick={() => articleService.trackClick(sub.articleId)}
               className="bg-white p-5 md:p-8 rounded-3xl border border-slate-100 shadow-sm transition-all flex flex-col items-center gap-6 group hover:shadow-xl hover:-translate-y-2"
             >
+
               <div className="p-5 rounded-3xl bg-slate-50 group-hover:bg-blue-50 group-hover:scale-110 transition-all duration-500">
                 {getIcon(sub.name)}
               </div>

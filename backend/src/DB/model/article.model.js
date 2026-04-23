@@ -6,8 +6,17 @@ const articleSchema = new mongoose.Schema({
     program: { type: String, required: true }, // '1' for Gerber, '2' for Gemini
     mainCategory: { type: String, required: true }, // 'women', 'men', 'kids'
     category: { type: String }, // e.g., 'T-shirt', 'Shirt'
+    status: { 
+        type: String, 
+        enum: ['active', 'draft', 'paused'], 
+        default: 'active' 
+    },
     isPublic: { type: Boolean, default: true },
+    views: { type: Number, default: 0 },
+    clicks: { type: Number, default: 0 },
     steps: [{
+
+
         id: { type: Number },
         title: { type: String },
         text: { type: String },

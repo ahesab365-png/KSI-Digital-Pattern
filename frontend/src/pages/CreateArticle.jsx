@@ -107,10 +107,12 @@ const CreateArticle = () => {
           program, 
           mainCategory, 
           category, 
-          isPublic: publish ? true : false, 
+          status: publish ? 'active' : 'draft',
+          isPublic: publish, // Keep for legacy
           steps,
           extraSections
         };
+
         if (isEditMode) {
             await articleService.update(id, articleData);
         } else {
