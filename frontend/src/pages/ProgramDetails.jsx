@@ -31,12 +31,12 @@ const ProgramDetails = () => {
       </div>
 
       {/* Static Category Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-20 animate-in fade-in slide-in-from-bottom-6 duration-1000">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 mb-20 animate-in fade-in slide-in-from-bottom-6 duration-1000">
         {mainCategories.map((cat) => (
           <div 
             key={cat.id}
             onClick={() => navigate(`/program/${id}/${cat.id}`)}
-            className="group relative h-[280px] md:h-[450px] rounded-[2.5rem] overflow-hidden cursor-pointer shadow-xl transition-all duration-500 border-4 border-black"
+            className="group relative h-[280px] sm:h-[350px] md:h-[450px] rounded-3xl overflow-hidden cursor-pointer shadow-xl transition-all duration-500 border border-slate-100"
           >
             {/* Background Image */}
             <div 

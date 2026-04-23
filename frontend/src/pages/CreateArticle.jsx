@@ -54,8 +54,49 @@ const CreateArticle = () => {
   }, [id, isEditMode]);
 
   const handleSave = async (publish = true) => {
+    // Basic Validation for both Draft and Publish
     if (!title.trim()) {
-        return MySwal.fire({ title: 'نقص في البيانات', text: 'يرجى كتابة عنوان للمقال', icon: 'error' });
+        return MySwal.fire({ title: 'بيانات ناقصة', text: 'يرجى كتابة عنوان للمقال على الأقل لحفظه', icon: 'warning', confirmButtonText: 'حسناً' });
+    }
+
+    // Strict Validation only for Publishing
+    if (publish) {
+        const isContentEmpty = !content || content === '<p><br></p>' || content.trim() === '';
+        if (isContentEmpty) {
+            return MySwal.fire({ title: 'بيانات ناقصة', text: 'يرجى كتابة وصف أو مقدمة للدرس قبل النشر', icon: 'warning', confirmButtonText: 'حسناً' });
+        }
+
+        if (!category.trim()) {
+            return MySwal.fire({ title: 'بيانات ناقصة', text: 'يرجى تحديد نوع القطعة قبل النشر', icon: 'warning', confirmButtonText: 'حسناً' });
+        }
+
+        if (steps.length === 0) {
+            return MySwal.fire({ title: 'بيانات ناقصة', text: 'يجب إضافة خطوة واحدة على الأقل للدرس قبل النشر', icon: 'warning', confirmButtonText: 'حسناً' });
+        }
+
+        for (let i = 0; i < steps.length; i++) {
+            const step = steps[i];
+            if (!step.title.trim() || !step.text.trim() || !step.image) {
+                return MySwal.fire({ 
+                    title: 'بيانات ناقصة في الخطوات', 
+                    text: `يرجى إكمال بيانات الخطوة رقم (${i + 1}) قبل النشر.`, 
+                    icon: 'warning', 
+                    confirmButtonText: 'حسناً' 
+                });
+            }
+        }
+
+        for (let i = 0; i < extraSections.length; i++) {
+            const section = extraSections[i];
+            if (!section.title.trim() || !section.content.trim()) {
+                return MySwal.fire({ 
+                    title: 'بيانات ناقصة في الأقسام الإضافية', 
+                    text: `يرجى إكمال بيانات القسم الإضافي رقم (${i + 1}) أو حذفه قبل النشر.`, 
+                    icon: 'warning', 
+                    confirmButtonText: 'حسناً' 
+                });
+            }
+        }
     }
 
     setIsSaving(true);
@@ -66,7 +107,7 @@ const CreateArticle = () => {
           program, 
           mainCategory, 
           category, 
-          isPublic: publish ? isPublic : false, 
+          isPublic: publish ? true : false, 
           steps,
           extraSections
         };
@@ -76,10 +117,15 @@ const CreateArticle = () => {
             await articleService.save(articleData);
             localStorage.removeItem(DRAFT_KEY);
         }
-        MySwal.fire({ title: publish ? 'تم النشر!' : 'تم الحفظ كمسودة!', icon: 'success' });
+        MySwal.fire({ 
+            title: publish ? 'تم النشر بنجاح!' : 'تم الحفظ كمسودة!', 
+            icon: 'success', 
+            timer: 2000, 
+            showConfirmButton: false 
+        });
         navigate('/admin');
     } catch (error) {
-        MySwal.fire({ title: 'خطأ', text: error.message, icon: 'error' });
+        MySwal.fire({ title: 'خطأ أثناء الحفظ', text: error.message, icon: 'error' });
     } finally {
         setIsSaving(false);
     }
@@ -151,16 +197,16 @@ const CreateArticle = () => {
           
           {/* Main Editor Area */}
           <div className="lg:col-span-8 space-y-8">
-            <div className="bg-white rounded-[2rem] p-6 md:p-10 shadow-sm border-2 border-black">
+            <div className="bg-white rounded-3xl p-4 md:p-10 shadow-sm border border-slate-100">
                <div className="space-y-6 text-right">
                   {/* Title Input */}
                   <div className="space-y-2">
-                    <label className="text-xs font-black text-black block pr-1">عنوان المقال الرئيسي</label>
+                    <label className="text-xs font-black text-black block pr-1">عنوان المقال الرئيسي <span className="text-red-500">*</span></label>
                     <div className="relative group">
                       <Type className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-black transition-colors" size={20} />
                       <input
                         type="text"
-                        className="w-full bg-white border-2 border-black rounded-2xl pr-10 py-4 text-xl md:text-2xl font-black text-slate-800 focus:ring-4 focus:ring-slate-100 transition-all text-right"
+                        className="w-full bg-white border border-slate-200 rounded-2xl pr-10 py-4 text-xl md:text-2xl font-black text-slate-800 focus:ring-4 focus:ring-blue-50/50 focus:border-blue-500 transition-all text-right outline-none"
                         placeholder="اكتب عنوان الدرس هنا..."
                         value={title}
                         onChange={(e) => setTitle(e.target.value)}
@@ -170,8 +216,8 @@ const CreateArticle = () => {
 
                   {/* Introduction Editor */}
                   <div className="space-y-2">
-                    <label className="text-xs font-black text-black block pr-1">وصف و مقدمة الدرس</label>
-                    <div className="rounded-2xl border-2 border-black overflow-hidden bg-white">
+                    <label className="text-xs font-black text-black block pr-1">وصف و مقدمة الدرس <span className="text-red-500">*</span></label>
+                    <div className="rounded-2xl border border-slate-200 overflow-hidden bg-white">
                       <ReactQuill 
                         value={content} 
                         onChange={setContent}
@@ -185,7 +231,7 @@ const CreateArticle = () => {
 
             {/* Steps Container */}
             <div className="space-y-12">
-              <div className="flex items-center justify-end px-2 border-b-2 border-black pb-4">
+              <div className="flex items-center justify-end px-2 border-b border-slate-100 pb-4">
                  <h3 className="text-xl font-black text-black">خطوات التنفيذ</h3>
               </div>
 
@@ -194,7 +240,7 @@ const CreateArticle = () => {
                   onClick={addStep}
                   className="w-full py-10 rounded-[2rem] border-4 border-dashed border-slate-200 hover:border-black hover:bg-slate-50 transition-all flex flex-col items-center justify-center gap-3 group"
                 >
-                  <div className="w-14 h-14 rounded-full bg-white border-2 border-black flex items-center justify-center group-hover:scale-110 transition-transform">
+                  <div className="w-14 h-14 rounded-full bg-white border border-slate-200 flex items-center justify-center group-hover:scale-110 transition-transform">
                     <Plus size={24} className="text-black" />
                   </div>
                   <span className="font-black text-slate-400 group-hover:text-black">ابدأ بإضافة الخطوة الأولى</span>
@@ -203,7 +249,7 @@ const CreateArticle = () => {
 
               {steps.map((step, index) => (
                 <div key={index} className="space-y-10">
-                  <div className="bg-white rounded-[2rem] p-5 md:p-8 shadow-sm border-2 border-black relative group">
+                  <div className="bg-white rounded-3xl p-4 md:p-8 shadow-sm border border-slate-100 relative group">
                     <div className="absolute -right-2 -top-2 w-10 h-10 rounded-xl bg-black text-white flex items-center justify-center text-sm font-black z-10 shadow-lg border-2 border-white">
                       {index + 1}
                     </div>
@@ -211,14 +257,14 @@ const CreateArticle = () => {
                     <div className="flex flex-col gap-6 text-right">
                       {/* Step Title */}
                       <div className="space-y-2">
-                         <label className="text-[10px] font-black text-black block pr-1">عنوان المرحلة / الخطوة</label>
+                         <label className="text-[10px] font-black text-black block pr-1">عنوان المرحلة / الخطوة <span className="text-red-500">*</span></label>
                          <div className="flex items-center gap-3 w-full">
-                            <button onClick={() => removeStep(index)} className="p-2.5 text-red-600 bg-white border-2 border-black hover:bg-red-50 rounded-xl transition-all shrink-0">
+                             <button onClick={() => removeStep(index)} className="p-2.5 text-red-600 bg-white border border-slate-200 hover:bg-red-50 rounded-xl transition-all shrink-0">
                               <Trash2 size={18} />
                             </button>
                             <input
                               type="text"
-                              className="flex-1 min-w-0 bg-white border-2 border-black rounded-xl px-4 py-3 text-sm font-bold text-slate-700 focus:ring-4 focus:ring-slate-100 transition-all text-right"
+                               className="flex-1 min-w-0 bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm font-bold text-slate-700 focus:ring-4 focus:ring-blue-50/50 focus:border-blue-500 transition-all text-right outline-none"
                               placeholder="مثال: مرحلة قص القماش"
                               value={step.title}
                               onChange={(e) => updateStep(index, 'title', e.target.value)}
@@ -228,9 +274,9 @@ const CreateArticle = () => {
 
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                          <div className="space-y-2">
-                           <label className="text-[10px] font-black text-black block pr-1">تفاصيل المرحلة (الشرح)</label>
-                           <textarea
-                             className="w-full h-44 bg-white border-2 border-black rounded-2xl p-4 text-sm font-medium text-slate-600 focus:ring-4 focus:ring-slate-100 transition-all text-right resize-none"
+                           <label className="text-[10px] font-black text-black block pr-1">تفاصيل المرحلة (الشرح) <span className="text-red-500">*</span></label>
+                             <textarea
+                               className="w-full h-44 bg-white border border-slate-200 rounded-2xl p-4 text-sm font-medium text-slate-600 focus:ring-4 focus:ring-blue-50/50 focus:border-blue-500 transition-all text-right resize-none outline-none"
                              placeholder="اشرح هذه الخطوة بالتفصيل للمتدربين..."
                              value={step.text}
                              onChange={(e) => updateStep(index, 'text', e.target.value)}
@@ -238,22 +284,22 @@ const CreateArticle = () => {
                          </div>
 
                          <div className="space-y-2">
-                           <label className="text-[10px] font-black text-black block pr-1">صورة توضيحية للمرحلة</label>
-                           <div className="relative h-44 rounded-2xl border-2 border-black bg-slate-50 hover:bg-white transition-all group overflow-hidden">
+                           <label className="text-[10px] font-black text-black block pr-1">صورة توضيحية للمرحلة <span className="text-red-500">*</span></label>
+                            <div className="relative h-44 rounded-2xl border border-slate-200 bg-slate-50 hover:bg-white transition-all group overflow-hidden">
                               {step.isUploading ? (
                                   <div className="absolute inset-0 flex items-center justify-center bg-white/60"><Loader2 className="animate-spin text-black" /></div>
                               ) : step.image ? (
                                 <>
                                   <img src={step.image} className="w-full h-full object-contain p-2" alt="Step" />
                                   <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
-                                     <button onClick={() => updateStep(index, 'image', null)} className="bg-white border-2 border-black text-red-600 p-2 rounded-lg hover:scale-110 transition-transform"><Trash2 size={18} /></button>
+                                      <button onClick={() => updateStep(index, 'image', null)} className="bg-white border border-slate-200 text-red-600 p-2 rounded-lg hover:scale-110 transition-transform"><Trash2 size={18} /></button>
                                   </div>
                                 </>
                               ) : (
                                 <label className="absolute inset-0 flex flex-col items-center justify-center cursor-pointer">
                                   <input type="file" className="hidden" onChange={(e) => handleImageUpload(index, e.target.files[0])} />
                                   <ImageIcon size={28} className="text-slate-300 mb-2" />
-                                  <span className="text-[10px] font-black text-black bg-white px-3 py-1 rounded-full border border-black">رفع صورة</span>
+                                   <span className="text-[10px] font-black text-slate-600 bg-white px-3 py-1 rounded-full border border-slate-200">رفع صورة</span>
                                 </label>
                               )}
                            </div>
@@ -267,10 +313,10 @@ const CreateArticle = () => {
                     <div className="absolute inset-0 flex items-center" aria-hidden="true">
                       <div className="w-full border-t-2 border-dashed border-slate-200"></div>
                     </div>
-                    <button 
-                      onClick={addStep}
-                      className="relative flex items-center gap-2 bg-white border-2 border-black px-6 py-2.5 rounded-full hover:bg-black hover:text-white transition-all group shadow-md"
-                    >
+                      <button 
+                        onClick={addStep}
+                        className="relative flex items-center gap-2 bg-white border border-slate-200 px-6 py-2.5 rounded-full hover:bg-blue-600 hover:text-white hover:border-blue-600 transition-all group shadow-md"
+                      >
                       <Plus size={16} className="group-hover:rotate-90 transition-transform duration-300" />
                       <span className="text-xs font-black">إضافة الخطوة التالية</span>
                     </button>
@@ -280,9 +326,9 @@ const CreateArticle = () => {
             </div>
 
             {/* Custom Information Sections */}
-            <div className="space-y-8 pt-10 border-t-4 border-black">
+            <div className="space-y-8 pt-10 border-t border-slate-100">
                <div className="flex items-center justify-between px-2">
-                 <button onClick={addExtraSection} className="bg-emerald-600 text-white p-2.5 rounded-xl hover:bg-emerald-700 transition-all shadow-sm border-2 border-black">
+                 <button onClick={addExtraSection} className="bg-blue-600 text-white p-2.5 rounded-xl hover:bg-blue-700 transition-all shadow-sm border border-transparent">
                    <Plus size={20} />
                  </button>
                  <div className="text-right">
@@ -292,7 +338,7 @@ const CreateArticle = () => {
                </div>
 
                {extraSections.map((section, index) => (
-                 <div key={index} className="bg-white rounded-[2rem] p-6 md:p-8 shadow-sm border-2 border-black relative animate-in fade-in slide-in-from-right-4 duration-500">
+                  <div key={index} className="bg-white rounded-3xl p-4 md:p-8 shadow-sm border border-slate-100 relative animate-in fade-in slide-in-from-right-4 duration-500">
                     <button onClick={() => removeExtraSection(index)} className="absolute -left-2 -top-2 w-8 h-8 rounded-full bg-red-600 text-white flex items-center justify-center border-2 border-white shadow-lg hover:scale-110 transition-transform">
                       <X size={14} />
                     </button>
@@ -302,7 +348,7 @@ const CreateArticle = () => {
                          <label className="text-xs font-black text-black block pr-1">اسم القسم (مثال: تعليمات هامة)</label>
                          <input
                            type="text"
-                           className="w-full bg-white border-2 border-black rounded-xl px-4 py-3 text-sm font-black text-slate-800 focus:ring-4 focus:ring-slate-100 transition-all text-right"
+                           className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm font-black text-slate-800 focus:ring-4 focus:ring-blue-50/50 focus:border-blue-500 transition-all text-right outline-none"
                            placeholder="اكتب اسم القسم هنا..."
                            value={section.title}
                            onChange={(e) => updateExtraSection(index, 'title', e.target.value)}
@@ -311,8 +357,8 @@ const CreateArticle = () => {
 
                        <div className="space-y-2">
                          <label className="text-xs font-black text-black block pr-1">محتوى القسم</label>
-                         <textarea
-                           className="w-full h-32 bg-white border-2 border-black rounded-2xl p-4 text-sm font-medium text-slate-600 focus:ring-4 focus:ring-slate-100 transition-all text-right resize-none"
+                          <textarea
+                            className="w-full h-32 bg-white border border-slate-200 rounded-2xl p-4 text-sm font-medium text-slate-600 focus:ring-4 focus:ring-blue-50/50 focus:border-blue-500 transition-all text-right resize-none outline-none"
                            placeholder="اكتب تفاصيل هذا القسم هنا..."
                            value={section.content}
                            onChange={(e) => updateExtraSection(index, 'content', e.target.value)}
@@ -332,8 +378,8 @@ const CreateArticle = () => {
 
           {/* Sidebar Settings */}
           <div className="lg:col-span-4 space-y-6">
-             <div className="bg-white rounded-[2rem] p-8 shadow-sm border-2 border-black sticky top-28">
-                <div className="flex items-center justify-end gap-3 mb-8 border-b-2 border-black pb-4">
+             <div className="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-slate-100 sticky top-28">
+                <div className="flex items-center justify-end gap-3 mb-8 border-b border-slate-100 pb-4">
                    <span className="text-sm font-black text-black uppercase">إعدادات الدرس</span>
                    <Settings className="text-black" size={20} />
                 </div>
@@ -345,8 +391,7 @@ const CreateArticle = () => {
                         {mainCategories.map((cat) => (
                           <button 
                             key={cat.id}
-                            onClick={() => setMainCategory(cat.id)} 
-                            className={`py-3 rounded-xl text-[10px] font-black border-2 transition-all ${mainCategory === cat.id ? 'bg-black border-black text-white shadow-lg' : 'bg-white border-slate-200 text-slate-400 hover:border-black'}`}
+                            onClick={() => setMainCategory(cat.id)}                             className={`py-3 rounded-xl text-[10px] font-black border transition-all ${mainCategory === cat.id ? 'bg-blue-600 border-blue-600 text-white shadow-lg shadow-blue-100' : 'bg-white border-slate-200 text-slate-400 hover:border-blue-600 hover:text-blue-600'}`}
                           >
                             {cat.title}
                           </button>
@@ -355,10 +400,10 @@ const CreateArticle = () => {
                    </div>
 
                    <div className="space-y-4 pt-4 border-t-2 border-slate-50">
-                     <label className="text-[11px] font-black text-black block text-right px-2">نوع القطعة</label>
+                     <label className="text-[11px] font-black text-black block text-right px-2">نوع القطعة <span className="text-red-500">*</span></label>
                      <input
                        type="text"
-                       className="w-full bg-white border-2 border-black rounded-xl px-4 py-3.5 text-sm font-bold text-slate-700 text-right focus:ring-4 focus:ring-slate-100"
+                        className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3.5 text-sm font-bold text-slate-700 text-right focus:ring-4 focus:ring-blue-50/50 focus:border-blue-500 outline-none"
                        placeholder="تيشيرت، قميص..."
                        value={category}
                        onChange={(e) => setCategory(e.target.value)}
@@ -368,10 +413,10 @@ const CreateArticle = () => {
                    <div className="space-y-4 pt-4 border-t-2 border-slate-50">
                      <label className="text-[11px] font-black text-black block text-right px-2">برنامج التصميم</label>
                      <div className="grid grid-cols-2 gap-3">
-                          <button onClick={() => setProgram('1')} className={`py-3.5 rounded-2xl text-[11px] font-black border-2 transition-all ${program === '1' ? 'bg-slate-900 border-black text-white' : 'bg-white border-slate-200 text-slate-400'}`}>
+                           <button onClick={() => setProgram('1')} className={`py-3.5 rounded-2xl text-[11px] font-black border transition-all ${program === '1' ? 'bg-blue-600 border-blue-600 text-white shadow-lg shadow-blue-100' : 'bg-white border-slate-200 text-slate-400 hover:border-blue-600 hover:text-blue-600'}`}>
                             Gerber
                           </button>
-                          <button onClick={() => setProgram('2')} className={`py-3.5 rounded-2xl text-[11px] font-black border-2 transition-all ${program === '2' ? 'bg-slate-900 border-black text-white' : 'bg-white border-slate-200 text-slate-400'}`}>
+                           <button onClick={() => setProgram('2')} className={`py-3.5 rounded-2xl text-[11px] font-black border transition-all ${program === '2' ? 'bg-blue-600 border-blue-600 text-white shadow-lg shadow-blue-100' : 'bg-white border-slate-200 text-slate-400 hover:border-blue-600 hover:text-blue-600'}`}>
                             Gemini
                           </button>
                      </div>
@@ -381,20 +426,18 @@ const CreateArticle = () => {
                      <label className="text-[11px] font-black text-black block text-right px-2">خصوصية الدرس</label>
                      <div className="flex flex-col gap-2">
                         <button 
-                          onClick={() => setIsPublic(true)} 
-                          className={`flex items-center justify-between p-4 rounded-2xl border-2 transition-all ${isPublic ? 'bg-emerald-50 border-black text-emerald-700' : 'bg-white border-slate-100 text-slate-400 hover:border-black'}`}
+                          onClick={() => setIsPublic(true)}                           className={`flex items-center justify-between p-4 rounded-2xl border transition-all ${isPublic ? 'bg-blue-50/50 border-blue-600 text-blue-700' : 'bg-white border-slate-100 text-slate-400 hover:border-blue-600'}`}
                         >
-                          <div className={`p-1.5 rounded-lg border border-black ${isPublic ? 'bg-emerald-500 text-white' : 'bg-white'}`}><Eye size={14} /></div>
+                           <div className={`p-1.5 rounded-lg border ${isPublic ? 'bg-blue-600 border-blue-600 text-white' : 'bg-white border-slate-200'}`}><Eye size={14} /></div>
                           <div className="flex flex-col items-end">
                             <span className="text-[11px] font-black">عام (Public)</span>
                           </div>
                         </button>
                         
                         <button 
-                          onClick={() => setIsPublic(false)} 
-                          className={`flex items-center justify-between p-4 rounded-2xl border-2 transition-all ${!isPublic ? 'bg-amber-50 border-black text-amber-700' : 'bg-white border-slate-100 text-slate-400 hover:border-black'}`}
+                          onClick={() => setIsPublic(false)}                           className={`flex items-center justify-between p-4 rounded-2xl border transition-all ${!isPublic ? 'bg-amber-50/50 border-amber-600 text-amber-700' : 'bg-white border-slate-100 text-slate-400 hover:border-blue-600'}`}
                         >
-                          <div className={`p-1.5 rounded-lg border border-black ${!isPublic ? 'bg-amber-500 text-white' : 'bg-white'}`}><EyeOff size={14} /></div>
+                           <div className={`p-1.5 rounded-lg border ${!isPublic ? 'bg-amber-500 border-amber-600 text-white' : 'bg-white border-slate-200'}`}><EyeOff size={14} /></div>
                           <div className="flex flex-col items-end">
                             <span className="text-[11px] font-black">خاص (Private)</span>
                           </div>

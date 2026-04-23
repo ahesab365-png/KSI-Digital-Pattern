@@ -33,12 +33,12 @@ const Home = () => {
       </div>
 
       {/* Cards Grid - Medium Size */}
-      <div className="grid md:grid-cols-2 gap-6 mb-16">
+      <div className="grid sm:grid-cols-2 gap-6 mb-16">
         {programs.map((program) => (
           <div 
             key={program.id}
             onClick={() => navigate(`/program/${program.id}`)}
-            className="group relative bg-white rounded-3xl p-6 border-2 border-black shadow-sm hover:shadow-xl transition-all duration-500 cursor-pointer overflow-hidden min-h-[180px] md:h-[220px]"
+            className="group relative bg-white rounded-3xl p-6 border border-slate-100 shadow-sm hover:shadow-xl transition-all duration-500 cursor-pointer overflow-hidden min-h-[180px] sm:h-[220px] md:h-[240px]"
           >
             {/* Background Image Container */}
             {program.bgImage && (
@@ -83,12 +83,12 @@ const Home = () => {
       </div>
 
       {/* Help Banner - Medium & Elegant */}
-      <div className="bg-white rounded-3xl p-8 flex flex-col md:flex-row justify-between items-center gap-6 border-2 border-black shadow-lg">
+      <div className="bg-white rounded-3xl p-8 flex flex-col md:flex-row justify-between items-center gap-6 border border-slate-100 shadow-lg">
         <div className="text-right flex-1">
           <h3 className="text-base font-bold text-slate-800 mb-1">تحتاج لتوجيه؟</h3>
           <p className="text-slate-400 text-xs">تحدث مع خبراء التصميم لدينا لمساعدتك في أي وقت.</p>
         </div>
-        <button className="bg-black text-white px-8 py-3 rounded-xl text-xs font-bold shadow-sm hover:bg-slate-800 transition-all flex items-center gap-2 border-2 border-white">
+        <button className="w-full md:w-auto bg-blue-600 text-white px-8 py-3 rounded-xl text-xs font-bold shadow-md hover:bg-blue-700 transition-all flex items-center justify-center gap-2 border border-transparent">
           <span>تواصل معنا</span>
           <MessageCircle size={16} />
         </button>

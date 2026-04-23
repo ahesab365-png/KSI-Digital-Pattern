@@ -35,7 +35,7 @@ const CategoryDetails = () => {
   return (
     <div className="max-w-6xl mx-auto font-arabic px-4 md:px-0">
       {/* Breadcrumbs */}
-      <div className="flex items-center justify-end gap-2 mb-8 text-slate-400">
+      <div className="flex flex-wrap items-center justify-end gap-2 mb-8 text-slate-400">
         <span className="text-xs text-slate-300">{categoryNames[category]}</span>
         <ArrowRight size={14} />
         <Link to={`/program/${id}`} className="text-xs hover:text-blue-600 transition-colors">
@@ -54,13 +54,18 @@ const CategoryDetails = () => {
       </div>
 
       {/* Grid */}
-      {!loading && subCategories.length > 0 ? (
+      {loading ? (
+        <div className="min-h-[40vh] flex flex-col items-center justify-center gap-4">
+           <div className="animate-spin rounded-full h-12 w-12 border-4 border-blue-600 border-t-transparent"></div>
+           <span className="text-xs font-black text-slate-400 animate-pulse uppercase tracking-widest">Loading Tutorials...</span>
+        </div>
+      ) : subCategories.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-20">
           {subCategories.map((sub) => (
             <Link 
               to={`/article/${sub.articleId}`}
               key={sub.articleId}
-              className="bg-white p-8 rounded-[2.5rem] border-2 border-black shadow-sm transition-all flex flex-col items-center gap-6 group hover:shadow-xl hover:-translate-y-2"
+              className="bg-white p-5 md:p-8 rounded-3xl border border-slate-100 shadow-sm transition-all flex flex-col items-center gap-6 group hover:shadow-xl hover:-translate-y-2"
             >
               <div className="p-5 rounded-3xl bg-slate-50 group-hover:bg-blue-50 group-hover:scale-110 transition-all duration-500">
                 {getIcon(sub.name)}

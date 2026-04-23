@@ -23,23 +23,23 @@ const Sidebar = ({ isOpen, onToggle }) => {
 
   return (
     <aside 
-      className={`fixed right-0 top-0 h-screen bg-white border-l border-slate-100 shadow-2xl z-[150] transition-all duration-500 ease-in-out flex flex-col font-arabic ${
-        isOpen ? 'w-64 translate-x-0' : 'w-0 translate-x-full invisible lg:visible lg:w-64 lg:translate-x-0'
+      className={`fixed right-0 top-0 h-screen bg-white border-l border-slate-100 shadow-2xl z-[150] transition-all duration-500 ease-in-out flex flex-col font-arabic w-64 ${
+        isOpen ? 'translate-x-0' : 'translate-x-full'
       }`}
     >
-      <div className={`w-64 flex flex-col h-full bg-white ${isOpen ? 'opacity-100' : 'opacity-0 lg:opacity-100'} transition-opacity duration-300`}>
-        {/* Sidebar Header with Close Button for Mobile */}
+      <div className={`w-64 flex flex-col h-full bg-white ${isOpen ? 'opacity-100' : 'opacity-0'} transition-opacity duration-300`}>
+        {/* Sidebar Header with Close Button */}
         <div className="p-6 border-b border-slate-50 flex items-center justify-between">
           <div className="flex flex-col">
             <h2 className="text-sm font-black text-slate-800 tracking-tightest uppercase">KSI Digital</h2>
             <p className="text-[10px] text-slate-400 mt-0.5 tracking-widest uppercase opacity-60">Digital Studio</p>
           </div>
-          <button onClick={onToggle} className="lg:hidden p-2 text-slate-400 hover:text-slate-800 transition-colors">
+          <button onClick={onToggle} className="p-2 text-slate-400 hover:text-slate-800 transition-colors">
             <X size={20} />
           </button>
         </div>
 
-        <nav className="flex-1 px-4 space-y-1 mt-8 overflow-y-auto">
+        <nav className="flex-1 px-4 flex flex-col space-y-1 mt-8 overflow-y-auto">
           {menuItems.map((item, index) => (
             <NavLink
               key={index}

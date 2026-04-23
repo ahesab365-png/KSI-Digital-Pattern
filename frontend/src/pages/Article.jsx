@@ -61,10 +61,10 @@ const Article = () => {
 
       {/* Header Info */}
       <div className="text-right mb-10">
-        <h1 className="text-3xl md:text-5xl font-black text-black mb-6 leading-tight">
+        <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-black mb-6 leading-tight">
           {article.title}
         </h1>
-        <div className="flex flex-wrap justify-end gap-4 text-slate-400 font-bold text-[10px] md:text-xs">
+        <div className="flex flex-wrap justify-end gap-4 text-slate-400 font-black text-[10px] md:text-xs">
            <div className="flex items-center gap-1.5 bg-white border border-slate-100 px-3 py-1.5 rounded-lg shadow-sm">
              <Clock size={14} className="text-black" />
              <span>نُشر في {new Date(article.createdAt).toLocaleDateString('ar-EG')}</span>
@@ -77,50 +77,50 @@ const Article = () => {
       </div>
 
       {/* Unified Article Content Container */}
-      <div className="bg-white rounded-[2.5rem] border-2 border-black shadow-xl overflow-hidden">
+      <div className="bg-white rounded-3xl border border-slate-100 shadow-xl">
         
         {/* Article Introduction Section */}
-        <div className="p-6 md:p-12 border-b-2 border-black bg-slate-50/30">
+        <div className="p-6 md:p-12 border-b border-slate-100 bg-slate-50/30">
           <div className="flex items-center justify-end gap-3 mb-6">
             <h2 className="text-xl font-black text-black">مقدمة الدرس</h2>
             <BookOpen className="text-black" size={24} />
           </div>
           <div 
-            className="prose prose-slate max-w-none text-right font-medium leading-[2] text-slate-700"
-            dangerouslySetInnerHTML={{ __html: article.content }}
+            className="prose prose-slate max-w-none text-right font-medium leading-[2] text-slate-700 break-words overflow-hidden"
+            dangerouslySetInnerHTML={{ __html: article.content || '' }}
           />
         </div>
 
         {/* Steps Section - Directly integrated */}
         <div className="p-6 md:p-12 space-y-16 bg-white">
-           <div className="flex items-center justify-end gap-3 mb-10 border-b-2 border-black pb-4">
+           <div className="flex items-center justify-end gap-3 mb-10 border-b border-slate-100 pb-4">
               <h2 className="text-2xl font-black text-black">خطوات التنفيذ</h2>
            </div>
 
            {article.steps && article.steps.map((step, index) => (
-             <div key={index} className="relative group">
+             <div key={index} className={`relative group ${index !== article.steps.length - 1 ? 'border-b border-slate-100 pb-16 mb-16' : ''}`}>
                 {/* Step Marker */}
-                <div className="hidden md:flex absolute -right-16 top-0 w-12 h-12 rounded-xl bg-black text-white items-center justify-center font-black text-lg shadow-lg border-2 border-white">
+                <div className="hidden lg:flex absolute -right-10 top-0 w-10 h-10 rounded-xl bg-black text-white items-center justify-center font-black text-sm shadow-lg border border-slate-100">
                   {index + 1}
                 </div>
 
                 <div className="flex flex-col md:flex-row gap-8 text-right">
-                  {/* Step Text Side */}
+                   {/* Step Text Side */}
                   <div className="flex-1 space-y-4">
-                     <div className="flex items-center justify-between md:justify-end gap-4 border-b border-slate-100 pb-3">
-                        <div className="md:hidden w-8 h-8 rounded-lg bg-black text-white flex items-center justify-center font-black text-sm">
+                     <div className="flex items-center justify-end gap-4 border-b border-slate-100 pb-3">
+                        <h3 className="font-black text-black text-lg md:text-xl text-right w-full">{step.title || `المرحلة ${index + 1}`}</h3>
+                        <div className="lg:hidden w-8 h-8 rounded-lg bg-black text-white flex items-center justify-center font-black text-sm shrink-0">
                           {index + 1}
                         </div>
-                        <h3 className="font-black text-black text-lg md:text-xl">{step.title || `المرحلة ${index + 1}`}</h3>
                      </div>
-                     <p className="text-slate-600 text-sm md:text-base leading-[2] whitespace-pre-wrap">
+                      <p className="text-slate-600 text-sm md:text-base leading-[2] whitespace-pre-wrap break-all overflow-hidden">
                         {step.text}
                      </p>
                   </div>
 
                   {/* Step Image Side */}
                   <div 
-                    className="w-full md:w-[320px] h-[240px] rounded-3xl border-2 border-black bg-slate-50 relative overflow-hidden group/img cursor-zoom-in"
+                    className="w-full md:w-[320px] h-[200px] sm:h-[240px] rounded-3xl border border-slate-200 bg-slate-50 relative overflow-hidden group/img cursor-zoom-in"
                     onClick={() => step.image && setSelectedImage(step.image)}
                   >
                     {step.image ? (
@@ -146,10 +146,10 @@ const Article = () => {
 
         {/* Custom Extra Sections Display */}
         {article.extraSections && article.extraSections.length > 0 && (
-          <div className="p-6 md:p-12 space-y-12 bg-slate-50/50 border-t-2 border-black">
+          <div className="p-6 md:p-12 space-y-12 bg-slate-50/50 border-t border-slate-100">
             {article.extraSections.map((section, index) => (
               <div key={index} className="text-right space-y-4">
-                 <div className="flex items-center justify-end gap-3 border-b-2 border-black/5 pb-2">
+                 <div className="flex items-center justify-end gap-3 border-b border-slate-100 pb-2">
                     <h3 className="text-xl font-black text-black">{section.title}</h3>
                     <div className="w-2 h-6 bg-black rounded-full"></div>
                  </div>

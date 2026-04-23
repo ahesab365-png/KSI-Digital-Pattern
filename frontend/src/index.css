@@ -14,12 +14,15 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  scroll-behavior: smooth;
 }
 
 body {
   margin: 0;
   border: none;
   font-family: 'Almarai', sans-serif;
+  overflow-x: hidden;
+  width: 100%;
 }
 
 /* Premium Word-Style Editor Animations */
@@ -74,6 +77,10 @@ body {
 
 .ql-editor {
   min-height: 250px;
+  max-height: 500px;
+  overflow-y: auto !important;
+  direction: rtl;
+  text-align: right;
   font-family: 'Inter', 'Outfit', sans-serif;
   line-height: 1.8;
   font-size: 15px;
@@ -152,14 +159,14 @@ p, span, h1, h2, h3, h4, h5, h6 {
   flex-wrap: wrap;
   justify-content: flex-end;
   gap: 4px;
-  border: 2px solid black !important;
+  border: 1px solid #e2e8f0 !important;
   border-top-left-radius: 1rem;
   border-top-right-radius: 1rem;
   background: white;
 }
 
 .ql-container.ql-snow {
-  border: 2px solid black !important;
+  border: 1px solid #e2e8f0 !important;
   border-top: none !important;
   border-bottom-left-radius: 1rem;
   border-bottom-right-radius: 1rem;
@@ -175,3 +182,16 @@ p, span, h1, h2, h3, h4, h5, h6 {
     margin-right: 0 !important;
   }
 }
+
+/* Global Touch Target Improvements */
+button, 
+a, 
+input[type="button"], 
+input[type="submit"] {
+  min-height: 44px;
+  min-width: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+

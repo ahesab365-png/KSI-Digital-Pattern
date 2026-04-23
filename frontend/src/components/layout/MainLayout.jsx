@@ -16,11 +16,11 @@ const MainLayout = ({ children }) => {
     <div className="min-h-screen bg-slate-50 flex flex-col font-arabic">
       
       {/* 1. Header - Fixed & Reliable */}
-      <header className="h-20 bg-white border-b border-slate-100 flex items-center justify-between sticky top-0 z-[100] px-6">
+      <header className="h-20 bg-white border-b border-slate-100 flex items-center justify-between sticky top-0 z-[100] px-4 md:px-6">
         <div className="flex items-center gap-4">
           <button 
             onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-            className="lg:hidden p-2 text-slate-600 bg-slate-50 rounded-xl active:bg-slate-200 transition-colors"
+            className="p-2 text-slate-600 bg-slate-50 rounded-xl active:bg-slate-200 transition-colors"
             aria-label="Toggle Menu"
           >
             {isSidebarOpen ? <X size={24} /> : <Menu size={24} />}
@@ -35,8 +35,8 @@ const MainLayout = ({ children }) => {
         <Sidebar isOpen={isSidebarOpen} onToggle={() => setIsSidebarOpen(false)} />
 
         {/* 3. Main Content - Responsive Margins */}
-        <main className="flex-1 w-full lg:mr-64 transition-all duration-300">
-          <div className="p-4 md:p-10 max-w-7xl mx-auto">
+        <main className={`flex-1 w-full transition-all duration-300 ${isSidebarOpen ? 'lg:mr-64' : 'lg:mr-0'}`}>
+          <div className="p-0 md:p-10 max-w-7xl mx-auto">
             {children}
           </div>
         </main>
