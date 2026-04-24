@@ -11,7 +11,6 @@ const Sidebar = ({ isOpen, onToggle }) => {
     { icon: <Folder size={18} />, label: 'برامجي', path: '/programs' },
     ...(isAdmin ? [
       { icon: <ShieldCheck size={18} />, label: 'الإدارة', path: '/admin' },
-      { icon: <BarChart3 size={18} />, label: 'التقارير', path: '/reports' },
     ] : []),
   ];
 

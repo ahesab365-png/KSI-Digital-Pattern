@@ -28,8 +28,6 @@ function App() {
       <Route path="/admin/dashboard" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
       <Route path="/admin/create-article" element={<ProtectedRoute><CreateArticle /></ProtectedRoute>} />
       <Route path="/admin/edit-article/:id" element={<ProtectedRoute><CreateArticle /></ProtectedRoute>} />
-      
-      <Route path="/reports" element={<ProtectedRoute><div className="text-center py-20 text-slate-400">قسم التقارير قريباً</div></ProtectedRoute>} />
     </Routes>
   );
 
