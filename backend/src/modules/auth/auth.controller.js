@@ -19,7 +19,7 @@ export const login = async (req, res, next) => {
         const token = jwt.sign(
             { id: user._id, email: user.email, role: user.role },
             'ksi_secret_key', // In a real app, use an env variable
-            { expiresIn: '1d' }
+            { expiresIn: '30d' } // Expires in 30 days for better admin experience
         );
 
         return res.status(200).json({ 
