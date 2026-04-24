@@ -1,6 +1,5 @@
 import { Router } from "express";
 import * as uploadController from "./upload.controller.js";
-import { fileUpload, handleMulterError } from "../../middlewares/multer.js";
 import { auth } from "../../middlewares/auth.middleware.js";
 
 const router = Router();
@@ -9,7 +8,6 @@ const router = Router();
 router.post(
     "/image",
     auth,
-    handleMulterError(fileUpload('articles').single('image')),
     uploadController.uploadImage
 );
 

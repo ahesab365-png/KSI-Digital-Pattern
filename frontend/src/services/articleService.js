@@ -6,15 +6,24 @@ export const articleService = {
   uploadImage: async (file) => {
     try {
         const token = localStorage.getItem('admin_token');
-        const formData = new FormData();
-        formData.append('image', file);
+        
+        // Convert file to Base64
+        const toBase64 = (f) => new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(f);
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = error => reject(error);
+        });
+        
+        const base64Image = await toBase64(file);
 
         const res = await fetch(`${BASE_URL}/upload/image`, {
           method: 'POST',
           headers: {
+            'Content-Type': 'application/json',
             'Authorization': `Bearer ${token}`
           },
-          body: formData
+          body: JSON.stringify({ image: base64Image, fileName: file.name })
         });
 
         if (!res.ok) {
