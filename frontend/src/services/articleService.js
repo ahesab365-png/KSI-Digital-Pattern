@@ -17,7 +17,10 @@ export const articleService = {
           body: formData
         });
 
-        if (!res.ok) throw new Error('فشل رفع الصورة');
+        if (!res.ok) {
+            const errData = await res.json().catch(() => ({}));
+            throw new Error(errData.message || 'فشل رفع الصورة');
+        }
         const data = await res.json();
         return data.imageUrl; // Cloudinary URL
     } catch (error) {

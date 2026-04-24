@@ -156,7 +156,7 @@ const CreateArticle = () => {
       const url = await articleService.uploadImage(file);
       updateStep(index, 'image', url);
     } catch (error) {
-      MySwal.fire({ title: 'خطأ في الرفع', icon: 'error' });
+      MySwal.fire({ title: 'خطأ في الرفع', text: error.message || 'حدث خطأ غير معروف', icon: 'error' });
     } finally {
       updateStep(index, 'isUploading', false);
     }
