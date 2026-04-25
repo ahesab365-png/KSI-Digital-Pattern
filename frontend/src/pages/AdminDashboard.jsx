@@ -124,6 +124,13 @@ const AdminDashboard = () => {
   });
 
   const getThumbnail = (art) => {
+    if (art.blocks && Array.isArray(art.blocks)) {
+      const firstStepWithImage = art.blocks
+        .filter(b => b.type === 'steps')
+        .flatMap(b => b.steps)
+        .find(s => s && s.image);
+      if (firstStepWithImage) return firstStepWithImage.image;
+    }
     if (art.steps?.length > 0 && art.steps[0].image) return art.steps[0].image;
     return art.image || null;
   };

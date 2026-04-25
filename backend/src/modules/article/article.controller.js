@@ -84,9 +84,13 @@ export const deleteArticle = async (req, res, next) => {
         // Collect images from main image and steps
         const imageUrls = [];
         if (article.image) imageUrls.push(article.image);
-        if (article.steps && Array.isArray(article.steps)) {
-            article.steps.forEach(step => {
-                if (step.image) imageUrls.push(step.image);
+        if (article.blocks && Array.isArray(article.blocks)) {
+            article.blocks.forEach(block => {
+                if (block.type === 'steps' && block.steps) {
+                    block.steps.forEach(step => {
+                        if (step.image) imageUrls.push(step.image);
+                    });
+                }
             });
         }
 
@@ -119,9 +123,13 @@ export const bulkDeleteArticles = async (req, res, next) => {
         for (const article of articles) {
             const imageUrls = [];
             if (article.image) imageUrls.push(article.image);
-            if (article.steps && Array.isArray(article.steps)) {
-                article.steps.forEach(step => {
-                    if (step.image) imageUrls.push(step.image);
+            if (article.blocks && Array.isArray(article.blocks)) {
+                article.blocks.forEach(block => {
+                    if (block.type === 'steps' && block.steps) {
+                        block.steps.forEach(step => {
+                            if (step.image) imageUrls.push(step.image);
+                        });
+                    }
                 });
             }
 

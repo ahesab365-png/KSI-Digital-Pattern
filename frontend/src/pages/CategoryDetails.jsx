@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Shirt, Scissors, Layers, ArrowRight, BookOpen } from 'lucide-react';
 import { articleService } from '../services/articleService';
+import { categoryService } from '../services/categoryService';
 
 const CategoryDetails = () => {
   const { id, category } = useParams();
@@ -11,8 +12,17 @@ const CategoryDetails = () => {
   useEffect(() => {
     const fetchSubs = async () => {
       setLoading(true);
-      const dynamicSubs = await articleService.getSubCategories(id, category);
-      setSubCategories(dynamicSubs);
+      const [dynamicSubs, cats] = await Promise.all([
+        articleService.getSubCategories(id, category),
+        categoryService.getAll()
+      ]);
+      
+      const merged = dynamicSubs.map(sub => {
+        const catMeta = cats.find(c => c.name === sub.name && c.mainCategory === category && c.program === id);
+        return { ...sub, image: catMeta?.image };
+      });
+
+      setSubCategories(merged);
       setLoading(false);
     };
     fetchSubs();
@@ -60,23 +70,29 @@ const CategoryDetails = () => {
            <span className="text-xs font-black text-slate-400 animate-pulse uppercase tracking-widest">Loading Tutorials...</span>
         </div>
       ) : subCategories.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-20">
+        <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-6 mb-20">
           {subCategories.map((sub) => (
             <Link 
               to={`/article/${sub.articleId}`}
               key={sub.articleId}
               onClick={() => articleService.trackClick(sub.articleId)}
-              className="bg-white p-5 md:p-8 rounded-3xl border border-slate-100 shadow-sm transition-all flex flex-col items-center gap-6 group hover:shadow-xl hover:-translate-y-2"
+              className="bg-white p-3 md:p-8 rounded-2xl md:rounded-3xl border border-slate-100 shadow-sm transition-all flex flex-col items-center gap-4 md:gap-6 group hover:shadow-xl hover:-translate-y-2"
             >
 
-              <div className="p-5 rounded-3xl bg-slate-50 group-hover:bg-blue-50 group-hover:scale-110 transition-all duration-500">
-                {getIcon(sub.name)}
+              <div className="w-full h-32 md:h-48 rounded-xl md:rounded-2xl bg-slate-50 overflow-hidden relative group-hover:scale-[1.02] transition-transform duration-500 border border-slate-100">
+                {sub.image ? (
+                    <img src={sub.image} className="w-full h-full object-cover" alt={sub.name} />
+                ) : (
+                    <div className="w-full h-full flex items-center justify-center bg-slate-50 group-hover:bg-blue-50 transition-colors">
+                        {getIcon(sub.name)}
+                    </div>
+                )}
               </div>
               <div className="text-center">
-                <span className="text-lg font-black text-slate-800 group-hover:text-blue-600 transition-colors block mb-1">
+                <span className="text-sm md:text-lg font-black text-slate-800 group-hover:text-blue-600 transition-colors block mb-1">
                   {sub.name}
                 </span>
-                <span className="text-[10px] font-bold text-slate-300 uppercase tracking-widest group-hover:text-blue-400 transition-colors">
+                <span className="text-[8px] md:text-[10px] font-bold text-slate-300 uppercase tracking-widest group-hover:text-blue-400 transition-colors">
                    فتح الشرح
                 </span>
               </div>

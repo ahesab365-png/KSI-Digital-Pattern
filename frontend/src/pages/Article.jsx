@@ -1,20 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { articleService } from '../services/articleService';
-import { ArrowRight, BookOpen, Clock, Tag, ChevronLeft, Image as ImageIcon, X, Maximize2 } from 'lucide-react';
+import { 
+  ArrowRight, BookOpen, Clock, Tag, ChevronLeft, Image as ImageIcon, 
+  X, Maximize2, PlayCircle, Info, ChevronDown
+} from 'lucide-react';
 
 const Article = () => {
   const { id } = useParams();
   const [article, setArticle] = useState(null);
   const [loading, setLoading] = useState(true);
   const [selectedImage, setSelectedImage] = useState(null);
+  const [openSections, setOpenSections] = useState({});
 
   useEffect(() => {
     const fetchArticle = async () => {
       const data = await articleService.getById(id);
       setArticle(data);
       setLoading(false);
-      // Track view
       if (data) {
         articleService.trackView(id);
       }
@@ -22,6 +25,137 @@ const Article = () => {
     fetchArticle();
   }, [id]);
 
+  const toggleSection = (id) => {
+    setOpenSections(prev => ({
+      ...prev,
+      [id]: !prev[id]
+    }));
+  };
+
+  const getEmbedUrl = (url) => {
+    if (!url) return null;
+    if (url.includes('youtube.com/watch?v=')) {
+        return url.replace('watch?v=', 'embed/');
+    }
+    if (url.includes('youtu.be/')) {
+        return url.replace('youtu.be/', 'youtube.com/embed/');
+    }
+    return url;
+  };
+
+  const renderBlock = (block, bIndex) => {
+    if (!block) return null;
+    
+    switch (block.type) {
+      case 'video':
+        return (
+          <div key={bIndex} className="space-y-4 md:space-y-6">
+              <div className="flex items-center gap-3">
+                  <PlayCircle className="text-red-600 shrink-0" size={24} />
+                  <h3 className="text-lg md:text-xl font-black text-slate-800">شرح فيديو توضيحي</h3>
+              </div>
+              <div className="aspect-video w-full rounded-2xl md:rounded-3xl overflow-hidden border-4 border-slate-50 shadow-xl bg-black">
+                  <iframe 
+                      src={getEmbedUrl(block.videoUrl)} 
+                      className="w-full h-full"
+                      frameBorder="0"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                      title="Video Tutorial"
+                  />
+              </div>
+          </div>
+        );
+      case 'extra':
+        return (
+          <div key={bIndex} className="space-y-4">
+              <div className="flex items-center gap-3">
+                  <div className="p-1.5 bg-blue-50 rounded-lg shrink-0"><Info className="text-blue-600" size={18} /></div>
+                  <h3 className="text-base md:text-lg font-black text-black">{block.title}</h3>
+              </div>
+              <div className="bg-slate-50/50 p-5 md:p-8 rounded-2xl border border-slate-100">
+                  <p className="text-slate-600 text-sm md:text-base leading-[2.2] break-all whitespace-pre-wrap font-medium">
+                      {block.content}
+                  </p>
+              </div>
+          </div>
+        );
+      case 'steps':
+        return (
+          <div key={bIndex} className="space-y-10 md:space-y-16">
+              {block.steps.map((step, sIndex) => (
+                  <div key={sIndex} className="flex flex-col md:flex-row gap-6 md:gap-10 items-start overflow-hidden">
+                      {/* Image Container */}
+                      <div 
+                          className="w-full md:w-[280px] lg:w-[400px] h-[200px] sm:h-[250px] md:h-[220px] lg:h-[300px] rounded-2xl md:rounded-3xl border-4 border-white bg-slate-50 relative overflow-hidden group/img cursor-zoom-in shrink-0 shadow-lg"
+                          onClick={() => step.image && setSelectedImage(step.image)}
+                      >
+                          {step.image ? (
+                              <>
+                                  <img src={step.image} className="w-full h-full object-cover transition-transform duration-700 group-hover/img:scale-110" alt="Step" />
+                                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover/img:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-[2px]">
+                                      <div className="bg-white p-3 rounded-full shadow-2xl transform scale-50 group-hover/img:scale-100 transition-transform duration-500">
+                                          <Maximize2 size={20} className="text-black" />
+                                      </div>
+                                  </div>
+                              </>
+                          ) : (
+                              <div className="flex flex-col items-center justify-center h-full opacity-20">
+                                  <ImageIcon size={48} />
+                                  <span className="text-[10px] font-black mt-3 uppercase tracking-widest">No Visual Guide</span>
+                              </div>
+                          )}
+                      </div>
+
+                      {/* Text Content */}
+                      <div className="flex-1 min-w-0 space-y-4 md:space-y-6 w-full">
+                          <div className="flex items-center gap-3 border-b border-slate-100 pb-3 md:pb-4">
+                              <div className="w-8 h-8 md:w-10 md:h-10 rounded-lg md:rounded-xl bg-black text-white flex items-center justify-center font-black text-sm md:text-lg shrink-0 shadow-md">
+                                  {sIndex + 1}
+                              </div>
+                              <h3 className="font-black text-black text-lg md:text-2xl break-all leading-tight">
+                                  {step.title || `المرحلة ${sIndex + 1}`}
+                              </h3>
+                          </div>
+                          <div className="bg-slate-50/50 p-4 md:p-6 rounded-xl md:rounded-2xl border border-slate-50 overflow-hidden">
+                              <p className="text-slate-600 text-sm md:text-base leading-[2.2] break-all whitespace-pre-wrap font-medium">
+                                  {step.text}
+                              </p>
+                          </div>
+                      </div>
+                  </div>
+              ))}
+          </div>
+        );
+      default:
+        return null;
+    }
+  };
+
+  // Grouping Logic
+  const sections = [];
+  let currentAccordion = null;
+
+  article?.blocks?.forEach((block, index) => {
+    if (block.type === 'title') {
+      currentAccordion = {
+        id: `section-${index}`,
+        title: block.title,
+        blocks: [],
+        groupType: 'accordion'
+      };
+      sections.push(currentAccordion);
+    } else if (block.type === 'video') {
+      sections.push({ ...block, groupType: 'standalone' });
+      currentAccordion = null;
+    } else {
+      if (currentAccordion) {
+        currentAccordion.blocks.push(block);
+      } else {
+        sections.push({ ...block, groupType: 'standalone' });
+      }
+    }
+  });
 
   if (loading) return (
     <div className="min-h-[60vh] flex items-center justify-center">
@@ -32,7 +166,7 @@ const Article = () => {
   if (!article) return <div className="text-center py-20 font-black">المقال غير موجود</div>;
 
   return (
-    <div className="max-w-5xl mx-auto font-arabic px-4 md:px-0 pb-20">
+    <div className="max-w-5xl mx-auto font-arabic px-3 sm:px-6 md:px-0 pb-20" dir="rtl">
       {/* Lightbox Modal */}
       {selectedImage && (
         <div 
@@ -51,25 +185,25 @@ const Article = () => {
       )}
 
       {/* Navigation */}
-      <div className="flex items-center justify-between mb-8 text-slate-400">
+      <div className="flex flex-col sm:flex-row items-center justify-between mb-8 text-slate-400 gap-4">
         <div className="flex items-center gap-2">
-           <span className="text-xs bg-slate-100 text-slate-500 px-3 py-1 rounded-full font-bold">
+           <span className="text-[10px] md:text-xs bg-slate-100 text-slate-500 px-3 py-1 rounded-full font-bold">
              {article.mainCategory === 'women' ? 'حريمي' : article.mainCategory === 'men' ? 'رجالي' : 'أطفال'}
            </span>
-           <ChevronLeft size={14} />
-           <span className="text-xs font-bold text-black">{article.category}</span>
+           <ChevronLeft size={14} className="rotate-180" />
+           <span className="text-[10px] md:text-xs font-bold text-black">{article.category}</span>
         </div>
-        <Link to={`/program/${article.program}/${article.mainCategory}`} className="text-xs hover:text-black flex items-center gap-1 transition-colors font-bold">
-          العودة للأقسام <ArrowRight size={14} />
+        <Link to={`/program/${article.program}/${article.mainCategory}`} className="text-[10px] md:text-xs hover:text-black flex items-center gap-1 transition-colors font-bold">
+           <ArrowRight size={14} className="rotate-180" /> العودة للأقسام
         </Link>
       </div>
 
       {/* Header Info */}
-      <div className="text-right mb-10">
-        <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-black mb-6 leading-tight">
+      <div className="text-right mb-10 px-2">
+        <h1 className="text-2xl sm:text-3xl md:text-5xl font-black text-black mb-6 leading-tight">
           {article.title}
         </h1>
-        <div className="flex flex-wrap justify-end gap-4 text-slate-400 font-black text-[10px] md:text-xs">
+        <div className="flex flex-wrap items-center gap-3 text-slate-400 font-black text-[10px] md:text-xs">
            <div className="flex items-center gap-1.5 bg-white border border-slate-100 px-3 py-1.5 rounded-lg shadow-sm">
              <Clock size={14} className="text-black" />
              <span>نُشر في {new Date(article.createdAt).toLocaleDateString('ar-EG')}</span>
@@ -82,89 +216,54 @@ const Article = () => {
       </div>
 
       {/* Unified Article Content Container */}
-      <div className="bg-white rounded-3xl border border-slate-100 shadow-xl">
+      <div className="bg-white rounded-2xl md:rounded-3xl border border-slate-100 shadow-xl overflow-hidden">
         
         {/* Article Introduction Section */}
-        <div className="p-6 md:p-12 border-b border-slate-100 bg-slate-50/30">
-          <div className="flex items-center justify-end gap-3 mb-6">
-            <h2 className="text-xl font-black text-black">مقدمة الدرس</h2>
-            <BookOpen className="text-black" size={24} />
+        <div className="p-5 md:p-12 bg-slate-50/30 border-b border-slate-100">
+          <div className="flex items-center gap-3 mb-6">
+            <BookOpen className="text-black shrink-0" size={24} />
+            <h2 className="text-lg md:text-xl font-black text-black">مقدمة الدرس</h2>
           </div>
           <div 
-            className="prose prose-slate max-w-none text-right font-medium leading-[2] text-slate-700 break-words overflow-hidden"
+            className="prose prose-slate max-w-none text-right font-medium leading-[2.2] text-slate-700 break-words text-sm md:text-base"
             dangerouslySetInnerHTML={{ __html: article.content || '' }}
           />
         </div>
 
-        {/* Steps Section - Directly integrated */}
-        <div className="p-6 md:p-12 space-y-16 bg-white">
-           <div className="flex items-center justify-end gap-3 mb-10 border-b border-slate-100 pb-4">
-              <h2 className="text-2xl font-black text-black">خطوات التنفيذ</h2>
-           </div>
-
-           {article.steps && article.steps.map((step, index) => (
-             <div key={index} className={`relative group ${index !== article.steps.length - 1 ? 'border-b border-slate-100 pb-16 mb-16' : ''}`}>
-                {/* Step Marker */}
-                <div className="hidden lg:flex absolute -right-10 top-0 w-10 h-10 rounded-xl bg-black text-white items-center justify-center font-black text-sm shadow-lg border border-slate-100">
-                  {index + 1}
-                </div>
-
-                <div className="flex flex-col md:flex-row gap-8 text-right">
-                   {/* Step Text Side */}
-                  <div className="flex-1 space-y-4">
-                     <div className="flex items-center justify-end gap-4 border-b border-slate-100 pb-3">
-                        <h3 className="font-black text-black text-lg md:text-xl text-right w-full">{step.title || `المرحلة ${index + 1}`}</h3>
-                        <div className="lg:hidden w-8 h-8 rounded-lg bg-black text-white flex items-center justify-center font-black text-sm shrink-0">
-                          {index + 1}
+        {/* Dynamic Blocks Container with Accordion Support */}
+        <div className="p-3 md:p-8 space-y-4">
+           {sections.map((section, idx) => {
+              if (section.groupType === 'accordion') {
+                const isOpen = openSections[section.id];
+                return (
+                  <div key={idx} className="group">
+                    <button 
+                      onClick={() => toggleSection(section.id)}
+                      className="w-full !flex flex-row items-center !justify-between px-4 py-3 md:px-10 md:py-5 hover:bg-slate-50 transition-all border border-slate-100 rounded-xl md:rounded-2xl bg-white shadow-sm"
+                    >
+                        <h2 className="text-base md:text-xl font-black text-black border-r-4 md:border-r-8 border-black pr-3 md:pr-4 leading-none text-right">
+                            {section.title}
+                        </h2>
+                        <div className={`p-1.5 rounded-full bg-slate-100 text-slate-400 transition-all ${isOpen ? 'rotate-180 bg-black text-white' : ''}`}>
+                            <ChevronDown size={18} className="md:w-5 md:h-5" />
                         </div>
-                     </div>
-                      <p className="text-slate-600 text-sm md:text-base leading-[2] whitespace-pre-wrap break-all overflow-hidden">
-                        {step.text}
-                     </p>
-                  </div>
-
-                  {/* Step Image Side */}
-                  <div 
-                    className="w-full md:w-[320px] h-[200px] sm:h-[240px] rounded-3xl border border-slate-200 bg-slate-50 relative overflow-hidden group/img cursor-zoom-in"
-                    onClick={() => step.image && setSelectedImage(step.image)}
-                  >
-                    {step.image ? (
-                      <>
-                        <img src={step.image} className="w-full h-full object-cover transition-transform duration-500 group-hover/img:scale-110" alt="Step" />
-                        <div className="absolute inset-0 bg-black/20 opacity-0 group-hover/img:opacity-100 transition-opacity flex items-center justify-center">
-                           <div className="bg-white/90 p-3 rounded-full shadow-lg">
-                              <Maximize2 size={20} className="text-black" />
-                           </div>
-                        </div>
-                      </>
-                    ) : (
-                      <div className="flex flex-col items-center justify-center h-full opacity-20">
-                         <ImageIcon size={48} />
-                         <span className="text-[10px] font-black mt-2 uppercase">No Image Available</span>
+                    </button>
+                    {isOpen && (
+                      <div className="mt-2 p-4 md:p-10 space-y-10 md:space-y-12 bg-white border border-slate-100 rounded-xl md:rounded-2xl animate-in slide-in-from-top-2 duration-300 overflow-hidden">
+                         {section.blocks.map((block, bIdx) => renderBlock(block, bIdx))}
                       </div>
                     )}
                   </div>
-                </div>
-             </div>
-           ))}
+                );
+              } else {
+                return (
+                  <div key={idx} className="p-4 md:p-8 border border-slate-100 rounded-xl md:rounded-2xl bg-white shadow-sm">
+                     {renderBlock(section, idx)}
+                  </div>
+                );
+              }
+           })}
         </div>
-
-        {/* Custom Extra Sections Display */}
-        {article.extraSections && article.extraSections.length > 0 && (
-          <div className="p-6 md:p-12 space-y-12 bg-slate-50/50 border-t border-slate-100">
-            {article.extraSections.map((section, index) => (
-              <div key={index} className="text-right space-y-4">
-                 <div className="flex items-center justify-end gap-3 border-b border-slate-100 pb-2">
-                    <h3 className="text-xl font-black text-black">{section.title}</h3>
-                    <div className="w-2 h-6 bg-black rounded-full"></div>
-                 </div>
-                 <p className="text-slate-600 text-sm md:text-base leading-[2] whitespace-pre-wrap font-medium">
-                    {section.content}
-                 </p>
-              </div>
-            ))}
-          </div>
-        )}
       </div>
 
       <div className="mt-16 text-center">

@@ -14,17 +14,20 @@ const articleSchema = new mongoose.Schema({
     isPublic: { type: Boolean, default: true },
     views: { type: Number, default: 0 },
     clicks: { type: Number, default: 0 },
-    steps: [{
-
-
-        id: { type: Number },
+    blocks: [{
+        type: { 
+            type: String, 
+            enum: ['title', 'steps', 'video', 'extra'],
+            required: true 
+        },
         title: { type: String },
-        text: { type: String },
-        image: { type: String } // Cloudinary URL
-    }],
-    extraSections: [{
-        title: { type: String },
-        content: { type: String }
+        content: { type: String },
+        videoUrl: { type: String },
+        steps: [{
+            title: { type: String },
+            text: { type: String },
+            image: { type: String }
+        }]
     }]
 }, { timestamps: true });
 

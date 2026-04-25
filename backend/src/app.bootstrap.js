@@ -1,5 +1,5 @@
 import { NODE_ENV, port } from '../config/config.service.js'
-import { authRouter, userRouter, articleRouter, uploadRouter } from './modules/index.js'
+import { authRouter, userRouter, articleRouter, uploadRouter, categoryRouter } from './modules/index.js'
 import express from 'express'
 import cors from 'cors'
 import bcrypt from 'bcrypt'
@@ -42,6 +42,7 @@ async function bootstrap() {
     app.use('/user', userRouter)
     app.use('/articles', articleRouter)
     app.use('/upload', uploadRouter)
+    app.use('/categories', categoryRouter)
 
     // Invalid routing
     app.use((req, res) => {
