@@ -5,10 +5,15 @@ import App from './App.jsx'
 import './index.css'
 import 'react-quill-new/dist/quill.snow.css';
 
+import { HelmetProvider } from 'react-helmet-async'
+
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <BrowserRouter>
-      <App />
+      <HelmetProvider>
+        <App />
+      </HelmetProvider>
     </BrowserRouter>
   </React.StrictMode>,
 )
+

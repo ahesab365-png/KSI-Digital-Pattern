@@ -1,40 +1,62 @@
-import { NODE_ENV, port } from '../config/config.service.js'
+import { NODE_ENV } from '../config/config.service.js'
 import { authRouter, userRouter, articleRouter, uploadRouter, categoryRouter } from './modules/index.js'
 import express from 'express'
 import cors from 'cors'
-import bcrypt from 'bcrypt'
+import helmet from 'helmet'
+import compression from 'compression'
+import rateLimit from 'express-rate-limit'
+import morgan from 'morgan'
 import { connectDB } from './DB/connection.db.js'
-import { UserModel } from './DB/model/user.model.js'
+import { seedDefaultAdmin } from './utils/seeding.util.js'
+import { sanitizeInput } from './middleware/sanitization.middleware.js'
 
 async function bootstrap() {
     const app = express()
     
-    // Connect to Database
-    await connectDB()
-
-    // Seed Default Admin
-    const adminExists = await UserModel.findOne({ role: 'superadmin' })
-    if (!adminExists) {
-        const hashedPassword = await bcrypt.hash('password123', 8)
-        await UserModel.create({
-            email: 'admin@ksi.com',
-            password: hashedPassword,
-            role: 'superadmin'
-        })
-        console.log('Default Admin Created: admin@ksi.com / password123')
+    // 0. Logging (Morgan)
+    if (NODE_ENV === 'development') {
+        app.use(morgan('dev'))
+    } else {
+        app.use(morgan('combined'))
     }
 
-    // Middlewares
+    // 1. Security Headers (Helmet)
+    app.use(helmet())
+
+    // 2. NoSQL Injection Sanitization
+    app.use(sanitizeInput)
+
+    // 3. Performance (Compression)
+
+    app.use(compression())
+
+    // 3. Connect to Database
+    await connectDB()
+
+    // 4. Seed Default Admin (Cleaned up)
+    await seedDefaultAdmin()
+
+    // 5. Rate Limiting (Prevents Brute-force/DoS)
+    const limiter = rateLimit({
+        windowMs: 15 * 60 * 1000, // 15 minutes
+        max: 100, // Limit each IP to 100 requests per windowMs
+        message: { message: "Too many requests from this IP, please try again later." },
+        standardHeaders: true,
+        legacyHeaders: false,
+    })
+    app.use('/auth', limiter) // Apply mostly to auth routes
+
+    // 6. Middlewares
+    const allowedOrigins = process.env.FRONTEND_URL ? process.env.FRONTEND_URL.split(',') : '*'
     app.use(cors({
-        origin: '*',
+        origin: allowedOrigins,
         methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
         allowedHeaders: ['Content-Type', 'Authorization'],
     }))
-
     
-    // 🔥 Increased limit to handle high-res images in articles (Base64)
-    app.use(express.json({ limit: '50mb' }))
-    app.use(express.urlencoded({ limit: '50mb', extended: true }))
+    // Increased limit to handle images, but keeping it safer
+    app.use(express.json({ limit: '10mb' }))
+    app.use(express.urlencoded({ limit: '10mb', extended: true }))
     
     // Application routing
     app.get('/', (req, res) => res.send('Welcome to KSI Digital Pattern API'))
@@ -49,12 +71,17 @@ async function bootstrap() {
         return res.status(404).json({ message: "Invalid application routing" })
     })
 
-    // Error-handling
+    // 7. Global Error-handling (Robust & Secure)
     app.use((error, req, res, next) => {
-        const status = error.cause?.status ?? 500
+        const status = error.cause?.status ?? error.status ?? 500
+        const message = status === 500 ? 'Internal Server Error' : error.message
+        
+        console.error(`[Error] ${req.method} ${req.url}:`, error)
+
         return res.status(status).json({
-            error_message: status == 500 ? 'something went wrong' : error.message ?? 'something went wrong',
-            stack: NODE_ENV == "development" ? error.stack : undefined
+            success: false,
+            message,
+            stack: NODE_ENV === "development" ? error.stack : undefined
         })
     })
     

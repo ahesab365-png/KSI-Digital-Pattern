@@ -29,3 +29,6 @@ console.log({SALT_ROUND});
 export const CLOUD_NAME = process.env.CLOUD_NAME
 export const API_KEY = process.env.API_KEY
 export const API_SECRET = process.env.API_SECRET
+
+export const JWT_SECRET = process.env.JWT_SECRET ?? 'ksi_fallback_secret_key_123'
+

@@ -5,6 +5,8 @@ import {
   ArrowRight, BookOpen, Clock, Tag, ChevronLeft, Image as ImageIcon, 
   X, Maximize2, PlayCircle, Info, ChevronDown
 } from 'lucide-react';
+import SEO from '../components/common/SEO';
+
 
 const Article = () => {
   const { id } = useParams();
@@ -167,7 +169,16 @@ const Article = () => {
 
   return (
     <div className="max-w-5xl mx-auto font-arabic px-3 sm:px-6 md:px-0 pb-20" dir="rtl">
+      {article && (
+        <SEO 
+          title={article.title} 
+          description={article.content?.replace(/<[^>]*>?/gm, '').substring(0, 160)} 
+          image={article.blocks?.find(b => b.type === 'steps')?.steps[0]?.image}
+          url={window.location.href}
+        />
+      )}
       {/* Lightbox Modal */}
+
       {selectedImage && (
         <div 
           className="fixed inset-0 z-[1000] bg-black/95 flex items-center justify-center p-4 animate-in fade-in duration-300"
