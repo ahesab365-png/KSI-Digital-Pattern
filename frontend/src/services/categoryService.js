@@ -1,5 +1,4 @@
-const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:7000';
-const CATEGORIES_URL = `${BASE_URL}/categories`;
+import { CATEGORIES_URL } from './api.config';
 
 export const categoryService = {
   getAll: async () => {

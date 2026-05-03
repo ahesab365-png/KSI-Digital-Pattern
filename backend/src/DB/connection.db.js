@@ -3,7 +3,7 @@ import { DB_URI } from '../../config/config.service.js'
 
 export const connectDB = async () => {
     try {
-        await mongoose.connect(DB_URI)
+        await mongoose.connect(DB_URI, { family: 4 })
         console.log('MongoDB connected successfully')
     } catch (error) {
         console.error('MongoDB connection error:', error)

@@ -6,7 +6,7 @@ import withReactContent from 'sweetalert2-react-content';
 
 const MySwal = withReactContent(Swal);
 
-const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:7000';
+import { AUTH_URL } from '../services/api.config';
 
 const AdminLogin = () => {
   const [email, setEmail] = useState('');
@@ -19,7 +19,7 @@ const AdminLogin = () => {
     setLoading(true);
     
     try {
-        const res = await fetch(`${BASE_URL}/auth/login`, {
+        const res = await fetch(`${AUTH_URL}/login`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email, password })
@@ -44,7 +44,7 @@ const AdminLogin = () => {
         console.error("Login Error:", error);
         MySwal.fire({
             title: <span className="font-arabic">خطأ فني</span>,
-            text: 'حدثت مشكلة أثناء الاتصال بالسيرفر. تأكد من تشغيل الباك-اند.',
+            text: `مشكلة في الاتصال: ${error.message}. تأكد من تشغيل الباك-اند على بورت 7000`,
             icon: 'warning',
             confirmButtonText: 'مفهوم',
             confirmButtonColor: '#f57c00'

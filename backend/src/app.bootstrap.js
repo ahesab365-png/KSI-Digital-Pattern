@@ -47,11 +47,23 @@ async function bootstrap() {
     app.use('/auth', limiter) // Apply mostly to auth routes
 
     // 6. Middlewares
-    const allowedOrigins = process.env.FRONTEND_URL ? process.env.FRONTEND_URL.split(',') : '*'
+    const isDev = NODE_ENV === 'development'
+    const rawOrigins = process.env.FRONTEND_URL ? process.env.FRONTEND_URL.split(',') : '*'
+    const allowedOrigins = Array.isArray(rawOrigins) 
+        ? rawOrigins.map(origin => origin.trim().replace(/\/$/, '')) 
+        : rawOrigins
+
     app.use(cors({
-        origin: allowedOrigins,
+        origin: isDev ? true : (origin, callback) => {
+            if (!origin || allowedOrigins === '*' || allowedOrigins.includes(origin.replace(/\/$/, ''))) {
+                callback(null, true)
+            } else {
+                callback(new Error('Not allowed by CORS'))
+            }
+        },
         methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
         allowedHeaders: ['Content-Type', 'Authorization'],
+        credentials: true
     }))
     
     // Increased limit to handle images, but keeping it safer
@@ -74,13 +86,30 @@ async function bootstrap() {
     // 7. Global Error-handling (Robust & Secure)
     app.use((error, req, res, next) => {
         const status = error.cause?.status ?? error.status ?? 500
-        const message = status === 500 ? 'Internal Server Error' : error.message
         
-        console.error(`[Error] ${req.method} ${req.url}:`, error)
+        // Generic messages for common status codes
+        const errorMessages = {
+            400: 'بيانات غير صالحة، يرجى التأكد من المدخلات',
+            401: 'غير مصرح لك بالدخول، يرجى تسجيل الدخول أولاً',
+            403: 'ليس لديك صلاحية للقيام بهذا الإجراء',
+            404: 'العنصر المطلوب غير موجود',
+            500: 'عذراً، حدث خطأ فني غير متوقع، يرجى المحاولة لاحقاً'
+        }
+
+        const message = errorMessages[status] || error.message || 'حدث خطأ ما'
+        
+        // Log detailed error for admin (server logs)
+        if (status === 500) {
+            console.error(`[CRITICAL ERROR] ${req.method} ${req.url}:`, error)
+        } else {
+            console.warn(`[Client Error] ${req.method} ${req.url}: ${message}`)
+        }
 
         return res.status(status).json({
             success: false,
             message,
+            // Hide stack trace even in development if you want total secrecy, 
+            // but usually we keep it for dev only.
             stack: NODE_ENV === "development" ? error.stack : undefined
         })
     })

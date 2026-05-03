@@ -1,5 +1,4 @@
-const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:7000';
-const ARTICLES_URL = `${BASE_URL}/articles`;
+import { BASE_URL, ARTICLES_URL, UPLOAD_URL } from './api.config';
 
 export const articleService = {
   // Upload Image to Cloudinary
@@ -17,7 +16,7 @@ export const articleService = {
         
         const base64Image = await toBase64(file);
 
-        const res = await fetch(`${BASE_URL}/upload/image`, {
+        const res = await fetch(`${UPLOAD_URL}/image`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

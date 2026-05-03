@@ -1,5 +1,6 @@
 import jwt from 'jsonwebtoken';
 import { UserModel } from '../DB/model/user.model.js';
+import { JWT_SECRET } from '../../config/config.service.js';
 
 export const auth = async (req, res, next) => {
     try {
@@ -13,7 +14,7 @@ export const auth = async (req, res, next) => {
             return res.status(401).json({ message: "Invalid token format" });
         }
 
-        const decoded = jwt.verify(token, 'ksi_secret_key'); // Use same secret as login
+        const decoded = jwt.verify(token, JWT_SECRET); // Use same secret as login
         const user = await UserModel.findById(decoded.id);
         
         if (!user) {
